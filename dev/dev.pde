@@ -1,24 +1,34 @@
 // plate moves X-Z, Credit drops Y+ -> Y-
 
-int MAX_X = 30;
-int MAX_Z = 30;
-int AREA_WALL_Y = 10000000;
+final int MaxX = 100;
+final int MaxZ = 100;
+final int AreaWallY = 10000000;
+final float CreditInitY = 100;
+final float CreditRelocateY = -3000;
 
 PlayArea area;
 PVector cameraEye, cameraPlace;
 PVector playAreaCenter = new PVector(0,0,0);
+PVector creditInit = new PVector(0,200,0);
+CreditSphere credit1, credit2;
 void setup() {
     size(800, 800, P3D);
     background(32);
     noStroke();
-    smooth();
-    area = new PlayArea(MAX_X * 2, AREA_WALL_Y, MAX_Z * 2);
+    frameRate(30);
+    // smooth();
+    sphereDetail(10);
+    hint(ENABLE_DEPTH_SORT); // for correct transparency rendering
+    area = new PlayArea(MaxX * 2, AreaWallY, MaxZ * 2);
     cameraPlace = new PVector(
-        (float)MAX_X * 0.85,
-        25,
+        (float)MaxX * 0.85,
+        80,
         0
     );
-    hint(ENABLE_DEPTH_SORT); // 透過表現を正しく行わせるため
+    credit1 = new CreditSphere(10, 1, color(255, 0, 0));
+    credit1.put(creditInit);
+    credit2 = new CreditSphere(5, 1000, color(0, 255, 0));
+    credit2.put(new PVector(50,200,0));
 }
 
 void draw() {
@@ -29,7 +39,29 @@ void draw() {
         0, -1, 0
     );
     //rotate by mouse
-    rotateY(map(mouseX, 0, width, TWO_PI, -TWO_PI));
-    perspective(PI/1.5, float(width)/float(height), 1, AREA_WALL_Y);
+    // rotateY(map(mouseX, 0, width, TWO_PI, -TWO_PI));
+    perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
+
+
     area.put(playAreaCenter);
+    credit1.relocateSetting(
+        CreditRelocateY,
+        new PVector(
+            random(credit1.getR(), MaxX - credit1.getR()),
+            CreditInitY,
+            random(credit1.getR(), MaxZ - credit1.getR())
+        )
+    );
+    credit2.relocateSetting(
+        CreditRelocateY,
+        new PVector(
+            random(credit2.getR(), MaxX - credit2.getR()),
+            CreditInitY,
+            random(credit2.getR(), MaxZ - credit2.getR())
+        )
+    );
+    credit1.update();
+    credit2.update();
+    // print(credit1.getY(), '\n');
+    
 }
