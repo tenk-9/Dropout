@@ -122,7 +122,6 @@ class CatchPlate{
             _coordinateLimitation();
         // reput
         put(_coordinate);
-        print(_mass, '\n');
     }
     public PVector getCoordinate(){
         return _coordinate;
