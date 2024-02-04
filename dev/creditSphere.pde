@@ -14,7 +14,7 @@ class CreditSphere{
     private color _predColor = color(255, 0, 0, 20);
     // relocate var
     private float _relocateThresY = -3000;
-    private PVector _relocatePlace;
+    private PVector _relocatePlace = new PVector(0, 0, 0);
     public boolean activateRelocate = false;
 
     public CreditSphere(float r, float mass, color fillColor){
@@ -92,12 +92,12 @@ class CreditSphere{
         // reput
         put(_coordinate);
         if(this.activateRelocate && _coordinate.y < _relocateThresY){
-            relocate(_relocatePlace);
+            relocate();
         }
     }
-    public void relocate(PVector initPlace){
+    public void relocate(){
         _v = 0;
-        put(initPlace);
+        put(_relocatePlace);
     }
     public void relocateSetting(float thresY, PVector place){
         this.activateRelocate = true;
@@ -106,5 +106,8 @@ class CreditSphere{
     }
     public void disableRelocate(){
         this.activateRelocate = false;
+    }
+    public float getMass(){
+        return _mass;
     }
 }
