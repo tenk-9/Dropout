@@ -1,26 +1,128 @@
 // plate moves X-Z, Credit drops Y+ -> Y-
 
-final int MaxX = 100;
-final int MaxZ = 100;
+// ----------------------------------------------------
+// game system variables
+// ----------------------------------------------------
+final int TotalCredits = 50;
+int appearedCredits = 0;
+int gainedWeights = 0;
+
+// ----------------------------------------------------
+// environment variables
+// ----------------------------------------------------
+// PlayArea
+final int MaxX = 50;
+final int MaxZ = 50;
 final int AreaWallY = 10000000;
-final float CreditInitY = 100;
-final float CreditRelocateY = -3000;
+// CreditSphere
+final int HandleCreditCount = 5;
+final int MinPutY = 200;
+final int MaxPutY = 1000;
+final float RelocateYThres = -2500;
 
-PlayArea area;
-CreditSphere credit1, credit2;
-CatchPlate plate;
-PVector cameraEye, cameraPlace;
+// ----------------------------------------------------
+// object definitions
+// ----------------------------------------------------
+// PlayArea
+PlayArea area = new PlayArea(MaxX * 2, AreaWallY, MaxZ * 2);
 PVector playAreaCenter = new PVector(0,0,0);
-PVector creditInit = new PVector(0,200,0);
+// CreditSpheres
+CreditSphere[] credits = new CreditSphere[HandleCreditCount];
+// CatchPlate
 PVector plateInit = new PVector(0,0,0);
-PVector plateSize = new PVector(50, 2, 50);
+PVector plateSize = new PVector(20, 2, 20);
+CatchPlate plate = new CatchPlate(plateSize);
+// camera
+PVector cameraEye = new PVector(0, -50, 0);
+PVector cameraPlace = new PVector((float)MaxX * 0.95, (float)MaxX * 0.8, 0);
 
 
+// ----------------------------------------------------
+// rendering
+// ----------------------------------------------------
+void setup() {
+    // global settings
+    size(800, 800, P3D);
+    background(32);
+    noStroke();
+    frameRate(30);
+    // game score init
+    appearedCredits = HandleCreditCount;
+    // smooth();
+    sphereDetail(10);
+    hint(ENABLE_DEPTH_SORT); // for correct transparency rendering
+    // objects config
+    area.fogRendering(true);
+    plate.moveAreaSetting(new PVector(MaxX * 2, 100, MaxZ * 2));
+    // put objects
+    for (int i = 0; i < HandleCreditCount; ++i) {
+        // define credits
+        float r = map(i, 0, HandleCreditCount, 5, 30); // radius ranged [5, 30]
+        float m = map(i, 0, HandleCreditCount -1, 1, 5); // mass ranged [1, 5]
+        colorMode(HSB, HandleCreditCount);
+        color c = color(i, 3, 3, 2);
+        colorMode(RGB, 255); // reset colorMode
+        credits[i] = new CreditSphere(r, m, c);
+
+        // put
+        PVector place = new PVector(
+            random(-MaxX + r, MaxX - r),
+            random(MinPutY, MaxPutY),
+            random(-MaxZ + r, MaxZ - r)
+        );
+        credits[i].put(place);
+    }
+    plate.put(plateInit);
+}
+void draw() {
+    background(0);
+    // camera settings
+    // cameraEye.x = plate.getCoordinate().x;
+    camera(
+        cameraPlace.x, cameraPlace.y, cameraPlace.z,
+        cameraEye.x, cameraEye.y, cameraEye.z, // later: this may be center of movingPlate
+        0, -1, 0
+    );
+    perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
+
+    area.put(playAreaCenter);
+    plate.update();
+    // credits
+    for (int i = 0; i < HandleCreditCount; ++i) {
+        float r = credits[i].getR();
+        // relocate place
+        PVector place = new PVector(
+            random(-MaxX + r, MaxX - r),
+            random(MinPutY, MaxPutY),
+            random(-MaxZ + r, MaxZ - r)
+        );
+        // relocation
+        if(credits[i].getPlace().y < RelocateYThres){
+            credits[i].relocate(place);
+            appearedCredits += 1;
+        }
+        // update state
+        credits[i].update();
+        // collision handle
+        if(collided(credits[i], plate)){
+            credits[i].relocate(place);
+            appearedCredits += 1;
+            plate.addMass(credits[i].getMass());
+            gainedWeights += credits[i].getMass();
+        }
+    }
+    // update score
+    print(gainedWeights, '/', TotalCredits, ',', appearedCredits, '\n');
+    // print(credit1.getY(), '\n');
+    
+}
+
+// ----------------------------------------------------
+// collision handler
+// ----------------------------------------------------
 boolean collided(CreditSphere credit, CatchPlate plate){
     // return collided with CatchPlate.
     // when this._coordinate is in CatchPlatre's body, return true;
-    
-    float xplim, xnlim, yplim, ynlim, zplim, znlim; // x-Plus limit, x-miNus limit, ...
     PVector plateCoord = plate.getCoordinate();
     PVector plateSize = plate.getSize();
     PVector creditCoord = credit.getPlace();
@@ -40,75 +142,4 @@ boolean collided(CreditSphere credit, CatchPlate plate){
         (creditCoord.z <= (plateCoord.z + plateSize.z / 2))
     );
     return xCond && yCond && zCond;
-}
-
-void setup() {
-    // global settings
-    size(800, 800, P3D);
-    background(32);
-    noStroke();
-    frameRate(30);
-    // smooth();
-    sphereDetail(10);
-    hint(ENABLE_DEPTH_SORT); // for correct transparency rendering
-    // object defenition
-    area = new PlayArea(MaxX * 2, AreaWallY, MaxZ * 2);
-    area.fogRendering(false);
-    credit1 = new CreditSphere(10, 1, color(255, 0, 0, 64));
-    credit1.put(creditInit);
-    credit2 = new CreditSphere(5, 1000, color(0, 255, 0, 64));
-    credit2.put(new PVector(50,200,0));
-    plate = new CatchPlate(plateSize, color(158, 16, 6));
-    cameraPlace = new PVector(
-        (float)MaxX * 0.85,
-        80,
-        0
-    );
-    plate.put(plateInit);
-    plate.moveAreaSetting(new PVector(MaxX * 2, 100, MaxZ * 2));
-}
-
-void draw() {
-    background(0);
-    // camera settings
-    cameraEye = plate.getCoordinate();
-    camera(
-        cameraPlace.x, cameraPlace.y, cameraPlace.z,
-        0, -50, 0, // later: this may be center of movingPlate
-        0, -1, 0
-    );
-    perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
-
-    // rendering
-    area.put(playAreaCenter);
-    plate.update();
-    credit1.relocateSetting(
-        CreditRelocateY,
-        new PVector(
-            random(credit1.getR(), MaxX - credit1.getR()),
-            CreditInitY,
-            random(credit1.getR(), MaxZ - credit1.getR())
-        )
-    );
-    credit2.relocateSetting(
-        CreditRelocateY,
-        new PVector(
-            random(credit2.getR(), MaxX - credit2.getR()),
-            CreditInitY,
-            random(credit2.getR(), MaxZ - credit2.getR())
-        )
-    );
-    credit1.update();
-    credit2.update();
-
-    if(collided(credit1, plate)){
-        credit1.relocate();
-        plate.addMass(credit1.getMass());
-    }
-    if(collided(credit2, plate)){
-        credit2.relocate();
-        plate.addMass(credit1.getMass());
-    }
-    // print(credit1.getY(), '\n');
-    
 }
