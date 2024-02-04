@@ -107,4 +107,7 @@ class CreditSphere{
     public void disableRelocate(){
         this.activateRelocate = false;
     }
+    public float getMass(){
+        return _mass;
+    }
 }
