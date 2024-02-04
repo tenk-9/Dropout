@@ -126,5 +126,8 @@ class CatchPlate{
     public PVector getCoordinate(){
         return _coordinate;
     }
+    public PVector getSize(){
+        return _size;
+    }
 
 }
