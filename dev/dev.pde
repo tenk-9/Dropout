@@ -13,7 +13,7 @@ PVector cameraEye, cameraPlace;
 PVector playAreaCenter = new PVector(0,0,0);
 PVector creditInit = new PVector(0,200,0);
 PVector plateInit = new PVector(0,0,0);
-PVector plateSize = new PVector(30, 2, 30);
+PVector plateSize = new PVector(50, 2, 50);
 
 
 boolean collided(CreditSphere credit, CatchPlate plate){
@@ -53,6 +53,7 @@ void setup() {
     hint(ENABLE_DEPTH_SORT); // for correct transparency rendering
     // object defenition
     area = new PlayArea(MaxX * 2, AreaWallY, MaxZ * 2);
+    area.fogRendering(false);
     credit1 = new CreditSphere(10, 1, color(255, 0, 0, 64));
     credit1.put(creditInit);
     credit2 = new CreditSphere(5, 1000, color(0, 255, 0, 64));
