@@ -5,10 +5,10 @@ class CatchPlate{
     private final color _fillColor = color(58, 201, 176, 120);
     private final color _strokeColor = color(58, 201, 176);
     // phisics var
-    private float _mass = 1;
+    private float _mass = 10;
     private PVector _velocity = new PVector(0, 0, 0);
     private PVector _force = new PVector(0, 0, 0);
-    private final float _forceSize = 1;
+    private final float _forceSize = 5;
     // area limitation var
     public boolean moveAreaLimitation = false;
     private PVector _moveArea = new PVector(0, 0, 0);
