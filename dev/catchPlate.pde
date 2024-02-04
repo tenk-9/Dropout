@@ -3,12 +3,7 @@ class CatchPlate{
     private final PVector _size;
     private PVector _coordinate;
     private final color _fillColor = color(58, 201, 176);
-    private final color _strokeColor = color(
-            red(_fillColor),
-            green(_fillColor),
-            blue(_fillColor),
-            120
-        );
+    private final color _strokeColor = color(58, 201, 176, 120);
     // phisics var
     private float _mass = 1;
     private PVector _velocity = new PVector(0, 0, 0);
