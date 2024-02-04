@@ -103,9 +103,11 @@ void draw() {
 
     if(collided(credit1, plate)){
         credit1.relocate();
+        plate.addMass(credit1.getMass());
     }
     if(collided(credit2, plate)){
         credit2.relocate();
+        plate.addMass(credit1.getMass());
     }
     // print(credit1.getY(), '\n');
     
