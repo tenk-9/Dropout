@@ -2,8 +2,8 @@ class CatchPlate{
     // plate own var
     private final PVector _size;
     private PVector _coordinate;
-    private final color _fillColor = color(58, 201, 176);
-    private final color _strokeColor = color(58, 201, 176, 120);
+    private final color _fillColor = color(58, 201, 176, 120);
+    private final color _strokeColor = color(58, 201, 176);
     // phisics var
     private float _mass = 1;
     private PVector _velocity = new PVector(0, 0, 0);
@@ -18,7 +18,7 @@ class CatchPlate{
     }
     public void put(PVector coordinate){
         _coordinate = coordinate;
-        noFill();
+        fill(_fillColor);
         stroke(_strokeColor);
         pushMatrix();
             translate(_coordinate.x, _coordinate.y, _coordinate.z);
