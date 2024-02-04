@@ -9,10 +9,10 @@ class CatchPlate{
             blue(_strokeColor),
             120
         );
-    private 
     // phisics var
     private float _mass = 1;
-    private PVector _velocity, _force;
+    private PVector _velocity = new PVector(0, 0, 0);
+    private PVector _force = new PVector(0, 0, 0);
     private final float _forceSize = 1;
     // area limitation var
     public boolean moveAreaLimitation = false;
@@ -20,7 +20,6 @@ class CatchPlate{
 
     public CatchPlate(PVector size){
         _size = size;
-        _velocity = new PVector(0, 0, 0);
     }
     public void put(PVector coordinate){
         _coordinate = coordinate;
