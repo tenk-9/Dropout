@@ -6,7 +6,7 @@ class CatchPlate{
     // phisics var
     private float _mass = 1;
     private PVector _velocity, _force;
-    private final float _forceSize = 0.5;
+    private final float _forceSize = 1;
     // area limitation var
     public boolean moveAreaLimitation = false;
     private PVector _moveArea = new PVector(0, 0, 0);
@@ -122,6 +122,7 @@ class CatchPlate{
             _coordinateLimitation();
         // reput
         put(_coordinate);
+        print(_mass, '\n');
     }
     public PVector getCoordinate(){
         return _coordinate;
