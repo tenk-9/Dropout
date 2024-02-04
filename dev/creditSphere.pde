@@ -10,6 +10,7 @@ class CreditSphere{
     private PVector _coordinate;
     private color _bodyColor = color(255, 255, 255, 255);
     // prediction circle var
+    private final float _predictionStartY = 500;
     private final float _predCircleR = 15, _predCircleDetail = 10;
     private color _predColor = color(255, 0, 0, 20);
     // relocate var
@@ -39,31 +40,33 @@ class CreditSphere{
         if(_coordinate.y <= 0){
             return;
         }
-        // prediction appears _coordinate.y in (0,100]
-        float alpha = map(_coordinate.y, 0, 100, 255, 0);
-        float radius = map(_coordinate.y, 0, 100, 0, _predCircleR);
-        // draw circle
-        noFill();
-        stroke(
-            red(_predColor),
-            green(_predColor),
-            blue(_predColor),
-            alpha
-        );
-        strokeWeight(1.5);
-        pushMatrix();
-            translate(_coordinate.x, 0, _coordinate.z);
-            beginShape();
-                for (int i = 0; i <= _predCircleDetail; ++i) {
-                    vertex(
-                        radius * cos(TWO_PI / _predCircleDetail * i),
-                        0,
-                        radius * sin(TWO_PI / _predCircleDetail * i)
-                    );
-                }
-            endShape(CLOSE);
-        popMatrix();
-        strokeWeight(1); // reset stroke width
+        // prediction appears _coordinate.y in (0,_predictionStartY]
+        if(_coordinate.y <= _predictionStartY){
+            float alpha = map(_coordinate.y, 0, _predictionStartY, 255, 0);
+            float radius = map(_coordinate.y, 0, _predictionStartY, 0, _predCircleR);
+            // draw circle
+            noFill();
+            stroke(
+                red(_predColor),
+                green(_predColor),
+                blue(_predColor),
+                alpha
+            );
+            strokeWeight(1.5);
+            pushMatrix();
+                translate(_coordinate.x, 0, _coordinate.z);
+                beginShape();
+                    for (int i = 0; i <= _predCircleDetail; ++i) {
+                        vertex(
+                            radius * cos(TWO_PI / _predCircleDetail * i),
+                            0,
+                            radius * sin(TWO_PI / _predCircleDetail * i)
+                        );
+                    }
+                endShape(CLOSE);
+            popMatrix();
+            strokeWeight(1); // reset stroke width
+        }
     }
     public PVector getPlace(){
         return _coordinate;
