@@ -16,6 +16,7 @@ PVector plateInit = new PVector(0,0,0);
 PVector plateSize = new PVector(30, 5, 30);
 
 void setup() {
+    // global settings
     size(800, 800, P3D);
     background(32);
     noStroke();
@@ -23,6 +24,7 @@ void setup() {
     // smooth();
     sphereDetail(10);
     hint(ENABLE_DEPTH_SORT); // for correct transparency rendering
+    // object defenition
     area = new PlayArea(MaxX * 2, AreaWallY, MaxZ * 2);
     credit1 = new CreditSphere(10, 1, color(255, 0, 0, 64));
     credit1.put(creditInit);
@@ -40,18 +42,17 @@ void setup() {
 
 void draw() {
     background(0);
+    // camera settings
     cameraEye = plate.getCoordinate();
     camera(
         cameraPlace.x, cameraPlace.y, cameraPlace.z,
         0, -50, 0, // later: this may be center of movingPlate
         0, -1, 0
     );
-    //rotate by mouse
-    // rotateY(map(mouseX, 0, width, TWO_PI, -TWO_PI));
     perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
 
+    // rendering
     area.put(playAreaCenter);
-    
     plate.update();
     credit1.relocateSetting(
         CreditRelocateY,
