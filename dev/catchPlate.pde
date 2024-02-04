@@ -4,7 +4,7 @@ class CatchPlate{
     private PVector _coordinate;
     private color _fillColor, _strokeColor;
     // phisics var
-    private float _mass = 3;
+    private float _mass = 1;
     private PVector _velocity, _force;
     private final float _forceSize = 0.5;
     // area limitation var
