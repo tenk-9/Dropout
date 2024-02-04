@@ -4,7 +4,7 @@ class CatchPlate{
     private PVector _coordinate;
     private color _fillColor, _strokeColor;
     // phisics var
-    public float mass = 1;
+    private float _mass = 1;
     private PVector _velocity, _force;
     private final float _forceSize = 0.5;
     // area limitation var
@@ -107,7 +107,7 @@ class CatchPlate{
             }
         }
         // a = F/m
-        a = PVector.div(_force, this.mass);
+        a = PVector.div(_force, _mass);
         // dx = v0*dt + 1/2*a*(dt^2)
         dCoord = PVector.add(
             PVector.mult(_velocity, dt),
@@ -130,6 +130,6 @@ class CatchPlate{
         return _size;
     }
     public void addMass(float increace){
-        this.mass += increace;
+        _mass += increace;
     }
 }
