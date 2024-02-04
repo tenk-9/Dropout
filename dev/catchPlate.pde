@@ -2,7 +2,14 @@ class CatchPlate{
     // plate own var
     private final PVector _size;
     private PVector _coordinate;
-    private color _fillColor, _strokeColor;
+    private final color _fillColor = color(58, 201, 176);
+    private final color _strokeColor = color(
+            red(_strokeColor),
+            green(_strokeColor),
+            blue(_strokeColor),
+            120
+        );
+    private 
     // phisics var
     private float _mass = 1;
     private PVector _velocity, _force;
@@ -11,9 +18,8 @@ class CatchPlate{
     public boolean moveAreaLimitation = false;
     private PVector _moveArea = new PVector(0, 0, 0);
 
-    public CatchPlate(PVector size, color stroke){
+    public CatchPlate(PVector size){
         _size = size;
-        _strokeColor = stroke;
         _velocity = new PVector(0, 0, 0);
     }
     public void put(PVector coordinate){
