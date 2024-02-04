@@ -4,9 +4,9 @@ class CatchPlate{
     private PVector _coordinate;
     private final color _fillColor = color(58, 201, 176);
     private final color _strokeColor = color(
-            red(_strokeColor),
-            green(_strokeColor),
-            blue(_strokeColor),
+            red(_fillColor),
+            green(_fillColor),
+            blue(_fillColor),
             120
         );
     // phisics var
