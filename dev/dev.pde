@@ -6,6 +6,8 @@
 final int TotalCredits = 50;
 int appearedCredits = 0;
 int gainedWeights = 0;
+float GPA = 0;
+PFont font;
 
 // ----------------------------------------------------
 // environment variables
@@ -19,6 +21,7 @@ final int HandleCreditCount = 5;
 final int MinPutY = 200;
 final int MaxPutY = 1000;
 final float RelocateYThres = -2500;
+boolean EnableRelocation = true;
 
 // ----------------------------------------------------
 // object definitions
@@ -33,8 +36,8 @@ PVector plateInit = new PVector(0,0,0);
 PVector plateSize = new PVector(20, 2, 20);
 CatchPlate plate = new CatchPlate(plateSize);
 // camera
-PVector cameraEye = new PVector(0, -50, 0);
-PVector cameraPlace = new PVector((float)MaxX * 0.95, (float)MaxX * 0.8, 0);
+PVector cameraEye = new PVector(0, 0, 0);
+PVector cameraPlace = new PVector(0, (float)MaxX * 1, -(float)MaxZ * 0.95);
 
 
 // ----------------------------------------------------
@@ -46,6 +49,8 @@ void setup() {
     background(32);
     noStroke();
     frameRate(30);
+    font = createFont("YuGothicUI-Bold-30", 20);
+    textFont(font);
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
@@ -76,15 +81,37 @@ void setup() {
 }
 void draw() {
     background(0);
-    // camera settings
-    // cameraEye.x = plate.getCoordinate().x;
+    
+    
+    // // camera settings
+    // cameraEye.z = plate.getCoordinate().z;
     camera(
         cameraPlace.x, cameraPlace.y, cameraPlace.z,
         cameraEye.x, cameraEye.y, cameraEye.z, // later: this may be center of movingPlate
         0, -1, 0
     );
+    // UI rendering
+    if(appearedCredits >= TotalCredits){
+        EnableRelocation = false;
+        pushMatrix();
+            // draw end message on x-z, y=0
+            rotateX(-HALF_PI);
+            fill(220, 220, 139, 128);
+            rectMode(CENTER);
+            rect(0, 0, MaxX * 2, MaxZ * 2);
+            GPA = (float)gainedWeights / TotalCredits;
+            String endMsg = "GAME\nFINISHED!";
+            String scoreMsg = "SCORE: " + GPA;
+            textAlign(CENTER);
+            fill(24, 24, 24);
+            textSize(12);
+            text(endMsg, 0, -10, 0.001);
+            textSize(10);
+            text(scoreMsg, 0, 40, 0.001);
+        popMatrix();
+    }
     perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
-
+    
     area.put(playAreaCenter);
     plate.update();
     // credits
@@ -97,7 +124,7 @@ void draw() {
             random(-MaxZ + r, MaxZ - r)
         );
         // relocation
-        if(credits[i].getPlace().y < RelocateYThres){
+        if(EnableRelocation && (credits[i].getPlace().y < RelocateYThres)){
             credits[i].relocate(place);
             appearedCredits += 1;
         }
@@ -111,9 +138,9 @@ void draw() {
             gainedWeights += credits[i].getMass();
         }
     }
-    // update score
+    // // update score
     print(gainedWeights, '/', TotalCredits, ',', appearedCredits, '\n');
-    // print(credit1.getY(), '\n');
+    // // print(credit1.getY(), '\n');
     
 }
 
