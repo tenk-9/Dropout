@@ -49,7 +49,7 @@ void setup() {
     background(32);
     noStroke();
     frameRate(30);
-    font = createFont("YuGothicUI-Bold-30", 20);
+    font = createFont("メイリオ", 20);
     textFont(font);
     // game score init
     appearedCredits = HandleCreditCount;
@@ -90,6 +90,7 @@ void draw() {
         cameraEye.x, cameraEye.y, cameraEye.z, // later: this may be center of movingPlate
         0, -1, 0
     );
+    perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
     // UI rendering
     if(appearedCredits >= TotalCredits){
         EnableRelocation = false;
@@ -103,22 +104,35 @@ void draw() {
             pushMatrix();
                 // draw end message on x-z, y=0
                 rotateX(-HALF_PI);
-                fill(220, 220, 139, 128);
+                noStroke();
+                fill(220, 220, 139, 20);
                 rectMode(CENTER);
                 rect(0, 0, MaxX * 2, MaxZ * 2);
                 GPA = (float)gainedWeights / TotalCredits;
                 String endMsg = "GAME\nFINISHED!";
                 String scoreMsg = "SCORE: " + GPA;
                 textAlign(CENTER);
-                fill(24, 24, 24);
+                fill(242, 242, 242);
                 textSize(12);
                 text(endMsg, 0, -10, 0.001);
-                textSize(10);
+                textSize(9);
                 text(scoreMsg, 0, 40, 0.001);
             popMatrix();
         }
     }
-    perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
+    pushMatrix();
+        scale(1, -1, 1);
+        fill(242, 242, 242);
+        String scoreInfo = (
+            ("Items left: " + (TotalCredits - appearedCredits))
+            + '\n' +
+            ("Points: " + gainedWeights)
+        );
+        textAlign(LEFT, BOTTOM);
+        textSize(10);
+        text(scoreInfo, -MaxX, -30, MaxZ);
+    popMatrix();
+    
     
     area.put(playAreaCenter);
     plate.update();
@@ -153,7 +167,7 @@ void draw() {
         }
     }
     // // update score
-    print(gainedWeights, '/', TotalCredits, ',', appearedCredits, '\n');
+    // print(gainedWeights, '/', TotalCredits, ',', appearedCredits, '\n');
     // // print(credit1.getY(), '\n');
     
 }
