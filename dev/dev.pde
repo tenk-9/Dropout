@@ -132,8 +132,14 @@ void draw() {
         credits[i].update();
         // collision handle
         if(collided(credits[i], plate)){
-            credits[i].relocate(place);
-            appearedCredits += 1;
+            // when collided, put credit far away
+            // item will relocate on next frame.
+            PVector yInf = new PVector(
+                credits[i].getPlace().x,
+                RelocateYThres * 2,
+                credits[i].getPlace().z
+            );
+            credits[i].relocate(yInf);
             plate.addMass(credits[i].getMass());
             gainedWeights += credits[i].getMass();
         }
