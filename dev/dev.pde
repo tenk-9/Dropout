@@ -3,7 +3,7 @@
 // ----------------------------------------------------
 // game system variables
 // ----------------------------------------------------
-final int TotalCredits = 50;
+final int TotalCredits = 20;
 int appearedCredits = 0;
 int gainedWeights = 0;
 float GPA = 0;
@@ -93,22 +93,30 @@ void draw() {
     // UI rendering
     if(appearedCredits >= TotalCredits){
         EnableRelocation = false;
-        pushMatrix();
-            // draw end message on x-z, y=0
-            rotateX(-HALF_PI);
-            fill(220, 220, 139, 128);
-            rectMode(CENTER);
-            rect(0, 0, MaxX * 2, MaxZ * 2);
-            GPA = (float)gainedWeights / TotalCredits;
-            String endMsg = "GAME\nFINISHED!";
-            String scoreMsg = "SCORE: " + GPA;
-            textAlign(CENTER);
-            fill(24, 24, 24);
-            textSize(12);
-            text(endMsg, 0, -10, 0.001);
-            textSize(10);
-            text(scoreMsg, 0, 40, 0.001);
-        popMatrix();
+        boolean allCreditPassed = true;
+        for (int i = 0; i < HandleCreditCount; ++i) {
+            allCreditPassed = allCreditPassed && (credits[i].getY() <= -plate.getSize().y);
+        }
+        // all Credits appeared AND all existing credits are passed
+        // -> GAME END
+        if(allCreditPassed){
+            pushMatrix();
+                // draw end message on x-z, y=0
+                rotateX(-HALF_PI);
+                fill(220, 220, 139, 128);
+                rectMode(CENTER);
+                rect(0, 0, MaxX * 2, MaxZ * 2);
+                GPA = (float)gainedWeights / TotalCredits;
+                String endMsg = "GAME\nFINISHED!";
+                String scoreMsg = "SCORE: " + GPA;
+                textAlign(CENTER);
+                fill(24, 24, 24);
+                textSize(12);
+                text(endMsg, 0, -10, 0.001);
+                textSize(10);
+                text(scoreMsg, 0, 40, 0.001);
+            popMatrix();
+        }
     }
     perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
     
