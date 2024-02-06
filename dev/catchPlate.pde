@@ -67,45 +67,40 @@ class CatchPlate{
             _velocity.z = 0;
         }  
     }
+    public void addForce(KeyState keyState){
+        _force = new PVector(0, 0, 0);
+        // wasd
+        if(keyState.get('w')){
+            _force.z += _forceSize;
+        }
+        if(keyState.get('a')){
+            _force.x -= _forceSize;
+        }
+        if(keyState.get('s')){
+            _force.z -= _forceSize;
+        }
+        if(keyState.get('d')){
+            _force.x += _forceSize;
+        }
+        // direction keys
+        // if(keyState.get(UP)){
+        //     _force.z += _forceSize;
+        // }
+        // if(keyState.get(LEFT)){
+        //     _force.x -= _forceSize;
+        // }
+        // if(keyState.get(DOWN)){
+        //     _force.z -= _forceSize;
+        // }
+        // if(keyState.get(RIGHT)){
+        //     _force.x += _forceSize;
+        // }
+    }
     public void update(){
         // add force to plate object
         PVector a, dCoord;
         // delta time = 1frame
         float dt = 1.0;
-        _force = new PVector(0, 0, 0);
-        if(keyPressed){
-            // add force by pressed keys
-            switch(key){
-                // wasd
-                case 'w':
-                    _force.x -= _forceSize;
-                    break;
-                case 'a':
-                    _force.z -= _forceSize;
-                    break;
-                case 's':
-                    _force.x += _forceSize;
-                    break;
-                case 'd':
-                    _force.z += _forceSize;
-                    break;
-                // dir keys
-                case UP:
-                    _force.x -= _forceSize;
-                    break;
-                case LEFT:
-                    _force.z -= _forceSize;
-                    break;
-                case DOWN:
-                    _force.x += _forceSize;
-                    break;
-                case RIGHT:
-                    _force.z += _forceSize;
-                    break;
-                default:
-                    break;
-            }
-        }
         // a = F/m
         a = PVector.div(_force, _mass);
         // dx = v0*dt + 1/2*a*(dt^2)
