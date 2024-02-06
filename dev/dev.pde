@@ -3,7 +3,7 @@
 // ----------------------------------------------------
 // game system variables
 // ----------------------------------------------------
-final int TotalCredits = 20;
+final int TotalCredits = 50;
 int appearedCredits = 0;
 int gainedWeights = 0;
 float GPA = 0;
@@ -39,6 +39,16 @@ CatchPlate plate = new CatchPlate(plateSize);
 PVector cameraEye = new PVector(0, 0, 0);
 PVector cameraPlace = new PVector(0, (float)MaxX * 1, -(float)MaxZ * 0.95);
 
+// ----------------------------------------------------
+// keyPress handller
+// ----------------------------------------------------
+KeyState keyState = new KeyState();
+void keyPressed(){
+    keyState.set(keyCode, true);
+}
+void keyReleased() {
+    keyState.set(keyCode, false);
+}
 
 // ----------------------------------------------------
 // rendering
@@ -54,7 +64,7 @@ void setup() {
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
-    sphereDetail(10);
+    sphereDetail(5);
     hint(ENABLE_DEPTH_SORT); // for correct transparency rendering
     // objects config
     area.fogRendering(true);
@@ -81,9 +91,7 @@ void setup() {
 }
 void draw() {
     background(0);
-    
-    
-    // // camera settings
+    // camera settings
     // cameraEye.z = plate.getCoordinate().z;
     camera(
         cameraPlace.x, cameraPlace.y, cameraPlace.z,
@@ -132,9 +140,11 @@ void draw() {
         textSize(10);
         text(scoreInfo, -MaxX, -30, MaxZ);
     popMatrix();
-    
-    
+
+    // play area
     area.put(playAreaCenter);
+    //plate
+    plate.addForce(keyState);
     plate.update();
     // credits
     for (int i = 0; i < HandleCreditCount; ++i) {
@@ -166,10 +176,6 @@ void draw() {
             gainedWeights += credits[i].getMass();
         }
     }
-    // // update score
-    // print(gainedWeights, '/', TotalCredits, ',', appearedCredits, '\n');
-    // // print(credit1.getY(), '\n');
-    
 }
 
 // ----------------------------------------------------
