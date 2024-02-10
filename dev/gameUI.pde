@@ -8,15 +8,15 @@ class GameUI{
     private final color _endUiFill = color(220, 220, 139, 20);
 
     // textWindow variables
-    private final color _textWindowFill = color(48, 10, 36);
+    private final color _textWindowFill = color(48, 10, 36, 200);
     private final color _textWindowStroke = color(35, 35, 35);
-    private final int _textWindowStrokeWeight = 3;
+    private final int _textWindowStrokeWeight = 2;
     private final color _textGreen = color(39, 148, 98);
     private final color _textBlue = color(17, 56, 119);
     private final color _textWhite = color(255, 255, 255);
     private final float _textFloatZ = -0.001;
-    private final PVector _statusWindowTL = new PVector(-MaxX, -50, MaxZ);
-    private final PVector _statusWindowSize = new PVector(MaxX * 2 - 10, 20);
+    private final PVector _textWindowTL = new PVector(-MaxX, -50, MaxZ / 2);
+    private final PVector _textWindowSize = new PVector(MaxX * 2 - 10, 40);
 
     //functions
     public GameUI(){}
@@ -62,14 +62,14 @@ class GameUI{
     }
     private void _textWindow(){
         pushMatrix();
-            translate(0, 0, MaxZ);
+            translate(0, 0, _textWindowTL.z);
             fill(_textWindowFill);
             stroke(_textWindowStroke);
             strokeWeight(3);
             rectMode(CORNER);
             rect(
-                _statusWindowTL.x, _statusWindowTL.y, 
-                _statusWindowSize.x, _statusWindowSize.y
+                _textWindowTL.x, _textWindowTL.y, 
+                _textWindowSize.x, _textWindowSize.y
             );
             strokeWeight(1); // reset weight
         popMatrix();
@@ -78,30 +78,30 @@ class GameUI{
         fill(_textGreen);
         text(
             "21140036@TMU", 
-            _statusWindowTL.x + _textShift * 1, 
-            _statusWindowTL.y + _textShift, 
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x + _textShift * 1, 
+            _textWindowTL.y + _textShift, 
+            _textWindowTL.z + _textFloatZ
         );
         fill(_textWhite);
         text(
             ":", 
-            _statusWindowTL.x + _textShift * 14,
-            _statusWindowTL.y + _textShift, 
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x + _textShift * 14,
+            _textWindowTL.y + _textShift, 
+            _textWindowTL.z + _textFloatZ
         );
         fill(_textBlue);
         text(
-            "~/hw/final",
-            _statusWindowTL.x + _textShift * 15, 
-            _statusWindowTL.y + _textShift, 
-            _statusWindowTL.z + _textFloatZ
+            "CG/hw/final",
+            _textWindowTL.x + _textShift * 15, 
+            _textWindowTL.y + _textShift, 
+            _textWindowTL.z + _textFloatZ
         );
         fill(_textWhite);
         text(
             "$ game info",
-            _statusWindowTL.x + _textShift * 26, 
-            _statusWindowTL.y + _textShift, 
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x + _textShift * 27, 
+            _textWindowTL.y + _textShift, 
+            _textWindowTL.z + _textFloatZ
         );
     }
     private void _textDescription(){
@@ -120,27 +120,27 @@ class GameUI{
         fill(_textWhite);
         text(
             " * Game status",
-            _statusWindowTL.x,
-            _statusWindowTL.y + _textShift * 3,
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x,
+            _textWindowTL.y + _textShift * 3,
+            _textWindowTL.z + _textFloatZ
         );
         text(
             "  - Status:      " + re,
-            _statusWindowTL.x,
-            _statusWindowTL.y + _textShift * 5,
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x,
+            _textWindowTL.y + _textShift * 5,
+            _textWindowTL.z + _textFloatZ
         );
         text(
             "  - Item left:   " + itemLeft,
-            _statusWindowTL.x,
-            _statusWindowTL.y + _textShift * 7,
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x,
+            _textWindowTL.y + _textShift * 7,
+            _textWindowTL.z + _textFloatZ
         );
         text(
             "  - Item gained: " + gainedItems, 
-            _statusWindowTL.x,
-            _statusWindowTL.y + _textShift * 9,
-            _statusWindowTL.z + _textFloatZ
+            _textWindowTL.x,
+            _textWindowTL.y + _textShift * 9,
+            _textWindowTL.z + _textFloatZ
         );
     }
     
