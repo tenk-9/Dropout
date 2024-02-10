@@ -100,7 +100,6 @@ void setup() {
 }
 void draw() {
     background(0);
-    print(gainedWeights, '\n');
     // ------------------------
     // camera settings
     // ------------------------
