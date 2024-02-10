@@ -54,6 +54,7 @@ class GameUI{
             scale(1, -1, 1);
             rotateX(-PI / 6);
             // window
+            translate(_textWindowTL.x, _textWindowTL.y, _textWindowTL.z);
             _textWindow();
             noStroke();
             // command
@@ -74,13 +75,12 @@ class GameUI{
     }
     private void _textWindow(){
         pushMatrix();
-            translate(0, 0, _textWindowTL.z);
             fill(_textWindowFill);
             stroke(_textWindowStroke);
             strokeWeight(3);
             rectMode(CORNER);
             rect(
-                _textWindowTL.x, _textWindowTL.y, 
+                0, 0, 
                 _textWindowSize.x, _textWindowSize.y
             );
             strokeWeight(1); // reset weight
@@ -90,30 +90,22 @@ class GameUI{
         fill(_textGreen);
         text(
             "21140036@TMU", 
-            _textWindowTL.x, 
-            _textWindowTL.y + _textShift, 
-            _textWindowTL.z + _textFloatZ
+           0, _textShift, _textFloatZ
         );
         fill(_textWhite);
         text(
             ":", 
-            _textWindowTL.x + _textShift * 13,
-            _textWindowTL.y + _textShift, 
-            _textWindowTL.z + _textFloatZ
+            _textShift * 13, _textShift, _textFloatZ
         );
         fill(_textBlue);
         text(
             "CG/hw/final",
-            _textWindowTL.x + _textShift * 14, 
-            _textWindowTL.y + _textShift, 
-            _textWindowTL.z + _textFloatZ
+            _textShift * 14, _textShift, _textFloatZ
         );
         fill(_textWhite);
         text(
             "$ game info",
-            _textWindowTL.x + _textShift * 26, 
-            _textWindowTL.y + _textShift, 
-            _textWindowTL.z + _textFloatZ
+            _textShift * 26, _textShift, _textFloatZ
         );
     }
     private void _textDescription(){
@@ -121,28 +113,20 @@ class GameUI{
         fill(_textWhite);
         text(
             " * Description",
-            _textWindowTL.x,
-            _textWindowTL.y,
-            _textWindowTL.z + _textFloatZ
+            0, 0, _textFloatZ
         );
         text(
             "  Use ",
-            _textWindowTL.x,
-            _textWindowTL.y + _textShift * 2,
-            _textWindowTL.z + _textFloatZ
+            0, _textShift * 2, _textFloatZ
         );
         // W A S D
         text(
             "to move plate,",
-            _textWindowTL.x + _textShift * 15,
-            _textWindowTL.y + _textShift * 2,
-            _textWindowTL.z + _textFloatZ
+            _textShift * 15, _textShift * 2, _textFloatZ
         );
         text(
             "  and get falling item AMAP!",
-            _textWindowTL.x,
-            _textWindowTL.y + _textShift * 4,
-            _textWindowTL.z + _textFloatZ
+            0, _textShift * 4, _textFloatZ
         );
     }
     private void _textKeyStatus(KeyState keyState){
@@ -152,45 +136,25 @@ class GameUI{
             fill(_textCyan);
         else
             fill(_textWhite);
-        text(
-            "W",
-            _textWindowTL.x,
-            _textWindowTL.y,
-            _textWindowTL.z + _textFloatZ
-        );
+        text("W", 0, 0, _textFloatZ);
         // a
         if(keyState.get('A'))
             fill(_textCyan);
         else
             fill(_textWhite);
-        text(
-            "A",
-            _textWindowTL.x + _textShift * 2,
-            _textWindowTL.y,
-            _textWindowTL.z + _textFloatZ
-        );
+        text("A", _textShift * 2, 0, _textFloatZ);
         // s
         if(keyState.get('S'))
             fill(_textCyan);
         else
             fill(_textWhite);
-        text(
-            "S",
-            _textWindowTL.x + _textShift * 4,
-            _textWindowTL.y,
-            _textWindowTL.z + _textFloatZ
-        );
+        text("S", _textShift * 4, 0, _textFloatZ);
         // d
         if(keyState.get('D'))
             fill(_textCyan);
         else
             fill(_textWhite);
-        text(
-            "D",
-            _textWindowTL.x + _textShift * 6,
-            _textWindowTL.y,
-            _textWindowTL.z + _textFloatZ
-        );
+        text("D", _textShift * 6, 0, _textFloatZ);
     }
     private void _textGameStatus(boolean finished, int itemLeft, int gainedItems){
         final String re;
@@ -202,27 +166,19 @@ class GameUI{
         fill(_textWhite);
         text(
             " * Game status",
-            _textWindowTL.x,
-            _textWindowTL.y,
-            _textWindowTL.z + _textFloatZ
+            0, 0, _textFloatZ
         );
         text(
             "  - Status:      " + re,
-            _textWindowTL.x,
-            _textWindowTL.y + _textShift * 2,
-            _textWindowTL.z + _textFloatZ
+            0, _textShift * 2, _textFloatZ
         );
         text(
             "  - Item left:   " + itemLeft,
-            _textWindowTL.x,
-            _textWindowTL.y + _textShift * 4,
-            _textWindowTL.z + _textFloatZ
+            0, _textShift * 4, _textFloatZ
         );
         text(
             "  - Item gained: " + gainedItems, 
-            _textWindowTL.x,
-            _textWindowTL.y + _textShift * 6,
-            _textWindowTL.z + _textFloatZ
+            0, _textShift * 6, _textFloatZ
         );
     }
     
