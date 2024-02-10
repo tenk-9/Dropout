@@ -5,11 +5,15 @@
 // ----------------------------------------------------
 final int TotalCredits = 50;
 int appearedCredits = 0;
-int gainedWeights = 0;
+float gainedWeights = 0;
 int gainedItems = 0;
 float GPA = 0;
-boolean gameFinished = false;
-
+enum GameState{
+    PLAYING,
+    PAUSING,
+    FINISHED
+};
+GameState modeState = GameState.PLAYING;
 
 // ----------------------------------------------------
 // environment variables
@@ -96,7 +100,10 @@ void setup() {
 }
 void draw() {
     background(0);
+    print(gainedWeights, '\n');
+    // ------------------------
     // camera settings
+    // ------------------------
     // cameraEye.z = plate.getCoordinate().z;
     camera(
         cameraPlace.x, cameraPlace.y, cameraPlace.z,
@@ -104,8 +111,25 @@ void draw() {
         0, -1, 0
     );
     perspective(PI/1.5, float(width)/float(height), 1, AreaWallY);
+
+    // ------------------------
     // UI rendering
-    if(appearedCredits >= TotalCredits){
+    // ------------------------
+    UI.drawTextWindow(
+        modeState,
+        TotalCredits - appearedCredits,
+        gainedItems,
+        keyState
+    );
+    if(modeState == GameState.FINISHED){
+        UI.drawFinishUI(GPA);
+    }
+    
+    // ------------------------
+    // watch game system
+    // ------------------------
+    // game end detection
+    if(appearedCredits >= TotalCredits && modeState == GameState.PLAYING){
         EnableRelocation = false;
         boolean allCreditPassed = true;
         for (int i = 0; i < HandleCreditCount; ++i) {
@@ -114,54 +138,82 @@ void draw() {
         // all Credits appeared AND all existing credits are passed
         // -> GAME END
         if(allCreditPassed){
-            gameFinished = true;
+            modeState = GameState.FINISHED;
             GPA = (float)gainedWeights / TotalCredits;
-            UI.drawFinishUI(GPA);
         }
     }
-    // game info UI
-    UI.drawTextWindow(
-        gameFinished,
-        TotalCredits - appearedCredits,
-        gainedItems,
-        keyState
-    );
+    // restart
+    if(keyState.get('R') || modeState == GameState.PAUSING){
+        UI.restartSelect();
+        if(keyState.get('Y'))
+        {
+            modeState = GameState.PLAYING;
+            // init variables
+            appearedCredits = 0;
+            plate.resetMass();
+            gainedWeights = 0;
+            gainedItems = 0;
+            GPA = 0;
+            // item will relocate.
+            for (int i = 0; i < HandleCreditCount; ++i) {
+                PVector yInf = new PVector(0, RelocateYThres * 2, 0);
+                credits[i].relocate(yInf);
+                EnableRelocation = true;
+            }
+        }
+        else if(keyState.get('N'))
+        {
+            modeState = GameState.PLAYING;
+        }
+        else{
+            modeState = GameState.PAUSING;
+        }
+    }
+    
+    
+
+    // ------------------------
+    // update object states
+    // ------------------------
     // play area
     area.put(playAreaCenter);
-    //plate
-    plate.addForce(keyState);
-    plate.update();
-    // credits
-    for (int i = 0; i < HandleCreditCount; ++i) {
-        float r = credits[i].getR();
-        // relocate place
-        PVector place = new PVector(
-            random(-MaxX + r, MaxX - r),
-            random(MinPutY, MaxPutY),
-            random(-MaxZ + r, MaxZ - r)
-        );
-        // relocation
-        if(EnableRelocation && (credits[i].getPlace().y < RelocateYThres)){
-            credits[i].relocate(place);
-            appearedCredits += 1;
-        }
-        // update state
-        credits[i].update();
-        // collision handle
-        if(collided(credits[i], plate)){
-            // when collided, put credit far away
-            // item will relocate on next frame.
-            PVector yInf = new PVector(
-                credits[i].getPlace().x,
-                RelocateYThres * 2,
-                credits[i].getPlace().z
+    if(modeState == GameState.PLAYING){
+        // plate
+        plate.addForce(keyState);
+        plate.update();
+        // credits
+        for (int i = 0; i < HandleCreditCount; ++i) {
+            float r = credits[i].getR();
+            // relocate place
+            PVector place = new PVector(
+                random(-MaxX + r, MaxX - r),
+                random(MinPutY, MaxPutY),
+                random(-MaxZ + r, MaxZ - r)
             );
-            credits[i].relocate(yInf);
-            plate.addMass(credits[i].getMass());
-            gainedWeights += credits[i].getMass();
-            gainedItems += 1;
+            // relocation
+            if(EnableRelocation && (credits[i].getPlace().y < RelocateYThres)){
+                credits[i].relocate(place);
+                appearedCredits += 1;
+            }
+            // update state
+            credits[i].update();
+            // collision handle
+            if(collided(credits[i], plate)){
+                // when collided, put credit far away
+                // item will relocate on next frame.
+                PVector yInf = new PVector(
+                    credits[i].getPlace().x,
+                    RelocateYThres * 2,
+                    credits[i].getPlace().z
+                );
+                credits[i].relocate(yInf);
+                plate.addMass(credits[i].getMass());
+                gainedWeights += credits[i].getMass();
+                gainedItems += 1;
+            }
         }
     }
+
 }
 
 // ----------------------------------------------------
