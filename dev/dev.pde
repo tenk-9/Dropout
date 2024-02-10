@@ -40,6 +40,8 @@ CatchPlate plate = new CatchPlate(plateSize);
 // camera
 PVector cameraEye = new PVector(0, 0, 0);
 PVector cameraPlace = new PVector(0, (float)MaxX * 1, -(float)MaxZ * 0.95);
+// UI
+GameUI UI = new GameUI();
 
 // ----------------------------------------------------
 // keyPress handller
@@ -61,8 +63,8 @@ void setup() {
     background(32);
     noStroke();
     frameRate(30);
-    PFont consoals = loadFont("Consolas-20.vlw");
-    textFont(consoals, 20);
+    // font file must have been created by "Tool/CreateFont".
+    UI.setFont("Consolas-20.vlw");
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
@@ -112,117 +114,16 @@ void draw() {
         // -> GAME END
         if(allCreditPassed){
             gameFinished = true;
-            pushMatrix();
-                // draw end message on x-z, y=0
-                rotateX(-HALF_PI);
-                noStroke();
-                fill(220, 220, 139, 20);
-                rectMode(CENTER);
-                rect(0, 0, MaxX * 2, MaxZ * 2);
-                GPA = (float)gainedWeights / TotalCredits;
-                String endMsg = "GAME\nFINISHED!";
-                String scoreMsg = "SCORE: " + GPA;
-                textAlign(CENTER);
-                fill(242, 242, 242);
-                textSize(12);
-                text(endMsg, 0, -10, 0.001);
-                textSize(9);
-                text(scoreMsg, 0, 40, 0.001);
-            popMatrix();
+            GPA = (float)gainedWeights / TotalCredits;
+            UI.drawFinishUI(GPA);
         }
     }
-    // game info
-    final color textWindowFill = color(48, 10, 36);
-    final color textWindowStroke = color(35, 35, 35);
-    final int textWindowStrokeWeight = 3;
-    final color textGreen = color(39, 148, 98);
-    final color textBlue = color(17, 56, 119);
-    final color textWhite = color(255, 255, 255);
-    final int textSize = 4;
-    final int textShift = textSize / 2;
-    final float textFloatZ = -0.001;
-    final PVector statusWindowTL = new PVector(-MaxX, -50, MaxZ);
-    final PVector statusWindowSize = new PVector(MaxX * 2 - 10, 20);
-    pushMatrix();
-        scale(1, -1, 1);
-        // draw window
-        pushMatrix();
-        translate(0, 0, MaxZ);
-            fill(textWindowFill);
-            stroke(textWindowStroke);
-            strokeWeight(3);
-            rectMode(CORNER);
-            rect(
-                statusWindowTL.x, statusWindowTL.y, 
-                statusWindowSize.x, statusWindowSize.y
-            );
-            strokeWeight(1);
-        popMatrix();
-        // put text
-        textAlign(LEFT, CENTER);
-        textSize(textSize);
-        noStroke();
-        // text/command
-        fill(textGreen);
-        text(
-            "21140036@TMU", 
-            statusWindowTL.x + textShift * 1, 
-            statusWindowTL.y + textShift, 
-            statusWindowTL.z + textFloatZ
-        );
-        fill(textWhite);
-        text(
-            ":", 
-            statusWindowTL.x + textShift * 14,
-            statusWindowTL.y + textShift, 
-            statusWindowTL.z + textFloatZ
-        );
-        fill(textBlue);
-        text(
-            "~/hw/final",
-            statusWindowTL.x + textShift * 15, 
-            statusWindowTL.y + textShift, 
-            statusWindowTL.z + textFloatZ
-        );
-        fill(textWhite);
-        text(
-            "$ game info",
-            statusWindowTL.x + textShift * 26, 
-            statusWindowTL.y + textShift, 
-            statusWindowTL.z + textFloatZ
-        );
-        // text/info
-        fill(textWhite);
-        text(
-            " * Mode:   " + (TotalCredits - appearedCredits),
-            statusWindowTL.x,
-            statusWindowTL.y + textShift * 2,
-            statusWindowTL.z + textFloatZ
-        );
-        text(
-            " * Item left:   " + (TotalCredits - appearedCredits),
-            statusWindowTL.x,
-            statusWindowTL.y + textShift * 4,
-            statusWindowTL.z + textFloatZ
-        );
-        text(
-            " * Item gained: " + gainedItems, 
-            statusWindowTL.x,
-            statusWindowTL.y + textShift * 6,
-            statusWindowTL.z + textFloatZ
-        );
-    popMatrix();
-    // control description
-    pushMatrix();
-        scale(1, -1, 1);
-        fill(242, 242, 242);
-        rotateY(HALF_PI);
-        String controlDescString = "Use: \nto move plate and get items AMAP!";
-        textAlign(LEFT, BOTTOM);
-        textSize(10);
-        text(controlDescString, -MaxX, -30, MaxZ - 0.001);
-    popMatrix();
-
+    // game info UI
+    UI.drawTextWindow(
+        gameFinished,
+        TotalCredits - appearedCredits,
+        gainedItems
+    );
     // play area
     area.put(playAreaCenter);
     //plate
