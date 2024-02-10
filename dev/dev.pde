@@ -64,7 +64,8 @@ void setup() {
     noStroke();
     frameRate(30);
     // font file must have been created by "Tool/CreateFont".
-    UI.setFont("Consolas-20.vlw");
+    // bigger size, clearer edge.
+    UI.setFont("Consolas-100.vlw");
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
@@ -122,7 +123,8 @@ void draw() {
     UI.drawTextWindow(
         gameFinished,
         TotalCredits - appearedCredits,
-        gainedItems
+        gainedItems,
+        keyState
     );
     // play area
     area.put(playAreaCenter);
