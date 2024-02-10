@@ -1,7 +1,7 @@
 # DropOut
 コンピュータグラフィックス（TMU/SD/CS, L0149）の最終課題として制作したゲームのリポジトリです．
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/e2uXIdh8fWE?si=azE23oySGOymQ3Bn" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![demo movie](https://img.youtube.com/vi/e2uXIdh8fWE/0.jpg)](https://www.youtube.com/watch?v=e2uXIdh8fWE)
 
 ## コンセプト
 板を操作して，画面外から落ちてくるアイテムをできるだけ多く集めるゲームです．
