@@ -12,6 +12,9 @@ class KeyState{
         states.put((int)'A', false);
         states.put((int)'S', false);
         states.put((int)'D', false);
+        states.put((int)'R', false);
+        states.put((int)'Y', false);
+        states.put((int)'N', false);
     }
     public boolean get(int keycode){
         // get state with keyCode integer
