@@ -35,7 +35,7 @@ class GameUI{
                 fill(_endUiFill);
                 rectMode(CENTER);
                 rect(0, 0, MaxX * 2, MaxZ * 2);
-                String endMsg = "GAME\nFINISHED!";
+                String endMsg = "GAME\n\nFINISHED!";
                 String scoreMsg = "SCORE: " + score;
                 textAlign(CENTER);
                 fill(_textWhite);
@@ -52,16 +52,23 @@ class GameUI{
         textFont(_font, _textSize);
         pushMatrix();
             scale(1, -1, 1);
+            rotateX(-PI / 6);
             // window
             _textWindow();
             noStroke();
             // command
             translate(_textShift, 0, 0);
             _textCommand();
-            // statusMsg
+            // description
             translate(0, _textShift * 3, 0);
-            // _textGameStatus(finished, itemLeft, gainedItems);
+            _textDescription();
+            // key pressed state
+            translate(_textShift * 7, _textShift * 2, 0);
             _textKeyStatus(keyState);
+            // statusMsg
+            translate(-_textShift * 7, _textShift * 4, 0);
+            // _textGameStatus(finished, itemLeft, gainedItems);
+            _textGameStatus(finished, itemLeft, gainedItems);
         popMatrix();
         
     }
@@ -119,9 +126,22 @@ class GameUI{
             _textWindowTL.z + _textFloatZ
         );
         text(
-            " * Description",
+            "  Use ",
             _textWindowTL.x,
-            _textWindowTL.y,
+            _textWindowTL.y + _textShift * 2,
+            _textWindowTL.z + _textFloatZ
+        );
+        // W A S D
+        text(
+            "to move plate,",
+            _textWindowTL.x + _textShift * 15,
+            _textWindowTL.y + _textShift * 2,
+            _textWindowTL.z + _textFloatZ
+        );
+        text(
+            "  and get falling item AMAP!",
+            _textWindowTL.x,
+            _textWindowTL.y + _textShift * 4,
             _textWindowTL.z + _textFloatZ
         );
     }
