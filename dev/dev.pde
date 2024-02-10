@@ -6,8 +6,10 @@
 final int TotalCredits = 50;
 int appearedCredits = 0;
 int gainedWeights = 0;
+int gainedItems = 0;
 float GPA = 0;
-PFont font;
+boolean gameFinished = false;
+
 
 // ----------------------------------------------------
 // environment variables
@@ -59,8 +61,8 @@ void setup() {
     background(32);
     noStroke();
     frameRate(30);
-    font = createFont("メイリオ", 20);
-    textFont(font);
+    PFont consoals = loadFont("Consolas-20.vlw");
+    textFont(consoals, 20);
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
@@ -109,6 +111,7 @@ void draw() {
         // all Credits appeared AND all existing credits are passed
         // -> GAME END
         if(allCreditPassed){
+            gameFinished = true;
             pushMatrix();
                 // draw end message on x-z, y=0
                 rotateX(-HALF_PI);
@@ -128,17 +131,96 @@ void draw() {
             popMatrix();
         }
     }
+    // game info
+    final color textWindowFill = color(48, 10, 36);
+    final color textWindowStroke = color(35, 35, 35);
+    final int textWindowStrokeWeight = 3;
+    final color textGreen = color(39, 148, 98);
+    final color textBlue = color(17, 56, 119);
+    final color textWhite = color(255, 255, 255);
+    final int textSize = 4;
+    final int textShift = textSize / 2;
+    final float textFloatZ = -0.001;
+    final PVector statusWindowTL = new PVector(-MaxX, -50, MaxZ);
+    final PVector statusWindowSize = new PVector(MaxX * 2 - 10, 20);
+    pushMatrix();
+        scale(1, -1, 1);
+        // draw window
+        pushMatrix();
+        translate(0, 0, MaxZ);
+            fill(textWindowFill);
+            stroke(textWindowStroke);
+            strokeWeight(3);
+            rectMode(CORNER);
+            rect(
+                statusWindowTL.x, statusWindowTL.y, 
+                statusWindowSize.x, statusWindowSize.y
+            );
+            strokeWeight(1);
+        popMatrix();
+        // put text
+        textAlign(LEFT, CENTER);
+        textSize(textSize);
+        noStroke();
+        // text/command
+        fill(textGreen);
+        text(
+            "21140036@TMU", 
+            statusWindowTL.x + textShift * 1, 
+            statusWindowTL.y + textShift, 
+            statusWindowTL.z + textFloatZ
+        );
+        fill(textWhite);
+        text(
+            ":", 
+            statusWindowTL.x + textShift * 14,
+            statusWindowTL.y + textShift, 
+            statusWindowTL.z + textFloatZ
+        );
+        fill(textBlue);
+        text(
+            "~/hw/final",
+            statusWindowTL.x + textShift * 15, 
+            statusWindowTL.y + textShift, 
+            statusWindowTL.z + textFloatZ
+        );
+        fill(textWhite);
+        text(
+            "$ game info",
+            statusWindowTL.x + textShift * 26, 
+            statusWindowTL.y + textShift, 
+            statusWindowTL.z + textFloatZ
+        );
+        // text/info
+        fill(textWhite);
+        text(
+            " * Mode:   " + (TotalCredits - appearedCredits),
+            statusWindowTL.x,
+            statusWindowTL.y + textShift * 2,
+            statusWindowTL.z + textFloatZ
+        );
+        text(
+            " * Item left:   " + (TotalCredits - appearedCredits),
+            statusWindowTL.x,
+            statusWindowTL.y + textShift * 4,
+            statusWindowTL.z + textFloatZ
+        );
+        text(
+            " * Item gained: " + gainedItems, 
+            statusWindowTL.x,
+            statusWindowTL.y + textShift * 6,
+            statusWindowTL.z + textFloatZ
+        );
+    popMatrix();
+    // control description
     pushMatrix();
         scale(1, -1, 1);
         fill(242, 242, 242);
-        String scoreInfo = (
-            ("Items left: " + (TotalCredits - appearedCredits))
-            + '\n' +
-            ("Points: " + gainedWeights)
-        );
+        rotateY(HALF_PI);
+        String controlDescString = "Use: \nto move plate and get items AMAP!";
         textAlign(LEFT, BOTTOM);
         textSize(10);
-        text(scoreInfo, -MaxX, -30, MaxZ);
+        text(controlDescString, -MaxX, -30, MaxZ - 0.001);
     popMatrix();
 
     // play area
@@ -174,6 +256,7 @@ void draw() {
             credits[i].relocate(yInf);
             plate.addMass(credits[i].getMass());
             gainedWeights += credits[i].getMass();
+            gainedItems += 1;
         }
     }
 }
