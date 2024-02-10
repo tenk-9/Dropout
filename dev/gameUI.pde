@@ -20,6 +20,10 @@ class GameUI{
     private final PVector _textWindowTL = new PVector(-MaxX * 1.5, -55, MaxZ * 0.8);
     private final PVector _textWindowSize = new PVector(MaxX * 2 - 10, 40);
 
+    // restart window variables
+    private final PVector _restartWindowSize = new PVector(MaxX * 2 - 10, 40);
+    private final PVector _restartWindowTL = new PVector(-_restartWindowSize.x / 2, -40, -MaxZ * 0.3);
+
     //functions
     public GameUI(){}
     public void setFont(String fontPath){
@@ -41,23 +45,24 @@ class GameUI{
                 fill(_textWhite);
                 textSize(12);
                 text(endMsg, 0, -10, 0.001);
-                textSize(9);
-                text(scoreMsg, 0, 40, 0.001);
+                textSize(12);
+                text(scoreMsg, 0, 35, 0.001);
+                textSize(4);
+                text("Press 'R' to restart.", 0, 45, 0.001);
             popMatrix();
     }
-    public void drawTextWindow(boolean finished, int itemLeft, int gainedItems, KeyState keyState){
+    public void drawTextWindow(GameState stateEnum, int itemLeft, int gainedItems, KeyState keyState){
         // show instructions, leftItems, etc as window like Ubuntu console
         textAlign(LEFT, CENTER);
         textSize(_textSize);
         textFont(_font, _textSize);
         pushMatrix();
             scale(1, -1, 1);
-            
             translate(_textWindowTL.x, _textWindowTL.y, _textWindowTL.z);
             rotateY(-PI / 18);
             rotateX(-PI / 6);
             // window
-            _textWindow();
+            _textWindow(_textWindowSize);
             noStroke();
             // command
             translate(_textShift, _textShift, 0);
@@ -70,14 +75,13 @@ class GameUI{
             _textKeyStatus(keyState);
             // statusMsg
             translate(-_textShift * 8, _textShift * 4, 0);
-            _textGameStatus(finished, itemLeft, gainedItems);
+            _textGameStatus(stateEnum, itemLeft, gainedItems);
             // GitHub link
             // translate(0, _textShift * 8, 0);
             // _textGithub();
         popMatrix();
-        
     }
-    private void _textWindow(){
+    private void _textWindow(PVector size){
         pushMatrix();
             fill(_textWindowFill);
             stroke(_textWindowStroke);
@@ -85,7 +89,7 @@ class GameUI{
             rectMode(CORNER);
             rect(
                 0, 0, 
-                _textWindowSize.x, _textWindowSize.y
+                size.x, size.y
             );
             strokeWeight(1); // reset weight
         popMatrix();
@@ -160,12 +164,22 @@ class GameUI{
             fill(_textWhite);
         text("D", _textShift * 6, 0, _textFloatZ);
     }
-    private void _textGameStatus(boolean finished, int itemLeft, int gainedItems){
+    private void _textGameStatus(GameState stateEnum, int itemLeft, int gainedItems){
         final String re;
-        if(finished)
-            re = "Finished";
-        else
-            re = "Playing";
+        switch (stateEnum) {
+            case FINISHED :
+                re = "Finished";
+            break;	
+            case PAUSING :
+                re = "Pausing";
+            break;	
+            case PLAYING :
+                re = "Playing";
+            break;	
+            default :
+                re = "Undefined";
+            break;	
+        }
         // draw status text
         fill(_textWhite);
         text(
@@ -196,15 +210,37 @@ class GameUI{
             "   https://github.com/tenk-9/Dropout",
             0, _textShift * 2, _textFloatZ
         );
-        // // W A S D
-        // text(
-        //     "to move plate,",
-        //     _textShift * 15, _textShift * 2, _textFloatZ
-        // );
-        // text(
-        //     "  and get falling item AMAP!",
-        //     0, _textShift * 4, _textFloatZ
-        // );
     }
-    
+    public void restartSelect(){
+        textAlign(LEFT, CENTER);
+        textSize(_textSize);
+        textFont(_font, _textSize);
+        pushMatrix();
+            // put window
+            scale(1, -1, 1);
+            translate(_restartWindowTL.x, _restartWindowTL.y, _restartWindowTL.z);
+            rotateX(-PI/3.9);
+            _textWindow(_restartWindowSize);
+            // message
+            translate(_textShift / 2, _textShift, 0);
+            fill(_textWhite);
+            text(
+                "KeyboardInterrupt:",
+                0, 0, _textFloatZ
+            );
+            text(
+                " 'R' key was pressed.",
+                0, _textShift * 2, _textFloatZ
+            );
+            text(
+                " Do you want to restart?",
+                0, _textShift * 6, _textFloatZ
+            );
+            textAlign(CENTER, CENTER);
+            text(
+                "Yes (Y)       No (N)",
+                _restartWindowSize.x / 2, _textShift * 10, _textFloatZ
+            );
+        popMatrix();
+    }
 }

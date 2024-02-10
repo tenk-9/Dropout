@@ -5,7 +5,8 @@ class CatchPlate{
     private final color _fillColor = color(58, 201, 176, 120);
     private final color _strokeColor = color(58, 201, 176);
     // phisics var
-    private float _mass = 300;
+    private final float _initMass = 300;
+    private float _mass = _initMass;
     private PVector _velocity = new PVector(0, 0, 0);
     private PVector _force = new PVector(0, 0, 0);
     private final float _forceSize = 60000;
@@ -126,5 +127,11 @@ class CatchPlate{
     }
     public void addMass(float increace){
         _mass += increace;
+    }
+    public float getMass(){
+        return _mass;
+    }
+    public void resetMass(){
+        _mass = _initMass;
     }
 }
