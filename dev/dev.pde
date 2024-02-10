@@ -6,8 +6,10 @@
 final int TotalCredits = 50;
 int appearedCredits = 0;
 int gainedWeights = 0;
+int gainedItems = 0;
 float GPA = 0;
-PFont font;
+boolean gameFinished = false;
+
 
 // ----------------------------------------------------
 // environment variables
@@ -38,6 +40,8 @@ CatchPlate plate = new CatchPlate(plateSize);
 // camera
 PVector cameraEye = new PVector(0, 0, 0);
 PVector cameraPlace = new PVector(0, (float)MaxX * 1, -(float)MaxZ * 0.95);
+// UI
+GameUI UI = new GameUI();
 
 // ----------------------------------------------------
 // keyPress handller
@@ -59,8 +63,9 @@ void setup() {
     background(32);
     noStroke();
     frameRate(30);
-    font = createFont("メイリオ", 20);
-    textFont(font);
+    // font file must have been created by "Tool/CreateFont".
+    // bigger size, clearer edge.
+    UI.setFont("Consolas-100.vlw");
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
@@ -109,38 +114,18 @@ void draw() {
         // all Credits appeared AND all existing credits are passed
         // -> GAME END
         if(allCreditPassed){
-            pushMatrix();
-                // draw end message on x-z, y=0
-                rotateX(-HALF_PI);
-                noStroke();
-                fill(220, 220, 139, 20);
-                rectMode(CENTER);
-                rect(0, 0, MaxX * 2, MaxZ * 2);
-                GPA = (float)gainedWeights / TotalCredits;
-                String endMsg = "GAME\nFINISHED!";
-                String scoreMsg = "SCORE: " + GPA;
-                textAlign(CENTER);
-                fill(242, 242, 242);
-                textSize(12);
-                text(endMsg, 0, -10, 0.001);
-                textSize(9);
-                text(scoreMsg, 0, 40, 0.001);
-            popMatrix();
+            gameFinished = true;
+            GPA = (float)gainedWeights / TotalCredits;
+            UI.drawFinishUI(GPA);
         }
     }
-    pushMatrix();
-        scale(1, -1, 1);
-        fill(242, 242, 242);
-        String scoreInfo = (
-            ("Items left: " + (TotalCredits - appearedCredits))
-            + '\n' +
-            ("Points: " + gainedWeights)
-        );
-        textAlign(LEFT, BOTTOM);
-        textSize(10);
-        text(scoreInfo, -MaxX, -30, MaxZ);
-    popMatrix();
-
+    // game info UI
+    UI.drawTextWindow(
+        gameFinished,
+        TotalCredits - appearedCredits,
+        gainedItems,
+        keyState
+    );
     // play area
     area.put(playAreaCenter);
     //plate
@@ -174,6 +159,7 @@ void draw() {
             credits[i].relocate(yInf);
             plate.addMass(credits[i].getMass());
             gainedWeights += credits[i].getMass();
+            gainedItems += 1;
         }
     }
 }
