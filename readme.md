@@ -40,16 +40,16 @@
   - 重力加速度はゲームバランスが最適となるよう，現実とは意図的に違えています．
 - 空気抵抗が再現されています．
   - 速度の向きと反対に，その大きさに比例する力がかかると仮定しています．
-  - $ F_{resist} = -kv$
+  - $` F_{resist} = -kv `$
 - 落下地点には現在の高さに応じて予測円が現れます．
   - ゲーム性向上のためです．
   - 高さが低いほど半径は小さく，色は赤くなります．
 #### 板
 - 力の作用を再現しています．
   - キー入力に応じて，物体に対して力を加えます．
-  - $ \textbf{a} = \textbf{F}/m$
-  - $ \textbf{x}\prime = \textbf{v}\delta t + (\textbf{a}/2)\delta t^2$
-  - $ \textbf{v}\prime = \textbf{v} + \textbf{a} \delta t$
+  - $` \textbf{a} = \textbf{F}/m `$
+  - $` \textbf{x}\prime = \textbf{v}\delta t + (\textbf{a}/2)\delta t^2 `$
+  - $` \textbf{v}\prime = \textbf{v} + \textbf{a} \delta t `$
 - アイテムの取得に応じて質量が変化します．
   - アイテムを取ればそれだけ動きが鈍くなります．
 #### 衝突判定
