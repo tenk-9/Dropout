@@ -69,7 +69,7 @@ void setup() {
     frameRate(30);
     // font file must have been created by "Tool/CreateFont".
     // bigger size, clearer edge.
-    UI.setFont("Consolas-100.vlw");
+    UI.setFont("Consolas-50.vlw");
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
