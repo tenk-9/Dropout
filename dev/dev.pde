@@ -100,6 +100,7 @@ void setup() {
 }
 void draw() {
     background(0);
+    ambientLight(100, 100, 100);
     // ------------------------
     // camera settings
     // ------------------------

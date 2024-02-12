@@ -6,7 +6,7 @@ class PlayArea{
     float _wallPeakY = 20;
     color _wallColor = color(31, 31, 31, 180);
     color _edgeColor = color(97, 118, 116, 180);
-    color _fogColor = color(5, 5, 5, 10);
+    color _fogColor = color(215, 215, 215, 10);
     color _Y0Color = color(220, 220, 170);
     private boolean _activateFog = true;
 

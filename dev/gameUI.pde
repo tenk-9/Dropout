@@ -10,7 +10,7 @@ class GameUI{
     private final color _textCyan = color(44, 148, 166);
     
     // finishUI variables
-    private final color _endUiFill = color(220, 220, 139, 20);
+    private final color _endUiFill = color(220, 220, 139, 70);
 
     // textWindow variables
     private final color _textWindowFill = color(48, 10, 36, 200);
@@ -43,12 +43,14 @@ class GameUI{
                 String scoreMsg = "SCORE: " + score;
                 textAlign(CENTER);
                 fill(_textWhite);
+                emissive(_textWhite);
                 textSize(12);
                 text(endMsg, 0, -10, 0.001);
                 textSize(12);
                 text(scoreMsg, 0, 35, 0.001);
                 textSize(4);
                 text("Press 'R' to restart.", 0, 45, 0.001);
+                emissive(0);
             popMatrix();
     }
     public void drawTextWindow(GameState stateEnum, int itemLeft, int gainedItems, KeyState keyState){
@@ -84,6 +86,7 @@ class GameUI{
     private void _textWindow(PVector size){
         pushMatrix();
             fill(_textWindowFill);
+            emissive(_textWindowFill / 2);
             stroke(_textWindowStroke);
             strokeWeight(3);
             rectMode(CORNER);
@@ -92,33 +95,40 @@ class GameUI{
                 size.x, size.y
             );
             strokeWeight(1); // reset weight
+            emissive(0);
         popMatrix();
     }
     private void _textCommand(){
         fill(_textGreen);
+        emissive(_textGreen);
         text(
             "21140036@TMU", 
            0, 0, _textFloatZ
         );
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             ":", 
             _textShift * 13, 0, _textFloatZ
         );
         fill(_textBlue);
+        emissive(_textBlue);
         text(
             "CG/hw/final",
             _textShift * 14, 0, _textFloatZ
         );
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             "$ game info",
             _textShift * 26, 0, _textFloatZ
         );
+        emissive(0);
     }
     private void _textDescription(){
         // description (about this game) and key operation
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             " * Description:",
             0, 0, _textFloatZ
@@ -136,33 +146,51 @@ class GameUI{
             "   and get falling item AMAP!",
             0, _textShift * 4, _textFloatZ
         );
+        emissive(0);
     }
     private void _textKeyStatus(KeyState keyState){
         // draw W A S D, filled Cyan which is pressed
         // w
-        if(keyState.get('W'))
+        if(keyState.get('W')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("W", 0, 0, _textFloatZ);
         // a
-        if(keyState.get('A'))
+        if(keyState.get('A')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("A", _textShift * 2, 0, _textFloatZ);
         // s
-        if(keyState.get('S'))
+        if(keyState.get('S')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("S", _textShift * 4, 0, _textFloatZ);
         // d
-        if(keyState.get('D'))
+        if(keyState.get('D')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("D", _textShift * 6, 0, _textFloatZ);
+        emissive(0);
     }
     private void _textGameStatus(GameState stateEnum, int itemLeft, int gainedItems){
         final String re;
@@ -182,6 +210,7 @@ class GameUI{
         }
         // draw status text
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             " * Game status:",
             0, 0, _textFloatZ
@@ -198,6 +227,7 @@ class GameUI{
             "  - Item gained: " + gainedItems, 
             0, _textShift * 6, _textFloatZ
         );
+        emissive(0);
     }
     private void _textGithub(){
         // put link to GitHub repo
@@ -224,6 +254,7 @@ class GameUI{
             // message
             translate(_textShift / 2, _textShift, 0);
             fill(_textWhite);
+            emissive(_textWhite);
             text(
                 "KeyboardInterrupt:",
                 0, 0, _textFloatZ
@@ -241,6 +272,7 @@ class GameUI{
                 "Yes (Y)       No (N)",
                 _restartWindowSize.x / 2, _textShift * 10, _textFloatZ
             );
+            emissive(0);
         popMatrix();
     }
 }
