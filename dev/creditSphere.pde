@@ -27,7 +27,9 @@ class CreditSphere{
             translate(_coordinate.x, _coordinate.y, _coordinate.z);
             noStroke();
             fill(_bodyColor);
+            emissive(_bodyColor);
             sphere(_r);
+            emissive(0);
         popMatrix();
         _drawPredCircle();
     }
