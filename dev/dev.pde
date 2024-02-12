@@ -169,8 +169,6 @@ void draw() {
             modeState = GameState.PAUSING;
         }
     }
-    
-    
 
     // ------------------------
     // update object states
@@ -213,7 +211,6 @@ void draw() {
             }
         }
     }
-
 }
 
 // ----------------------------------------------------
