@@ -254,6 +254,7 @@ class GameUI{
             // message
             translate(_textShift / 2, _textShift, 0);
             fill(_textWhite);
+            emissive(_textWhite);
             text(
                 "KeyboardInterrupt:",
                 0, 0, _textFloatZ
@@ -271,6 +272,7 @@ class GameUI{
                 "Yes (Y)       No (N)",
                 _restartWindowSize.x / 2, _textShift * 10, _textFloatZ
             );
+            emissive(0);
         popMatrix();
     }
 }
