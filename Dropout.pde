@@ -1,4 +1,4 @@
-// ver: 24021100
+// ver: 24021101
 
 // ----------------------------------------------------
 // game system variables
@@ -100,6 +100,7 @@ void setup() {
 }
 void draw() {
     background(0);
+    ambientLight(100, 100, 100);
     // ------------------------
     // camera settings
     // ------------------------
@@ -168,8 +169,6 @@ void draw() {
             modeState = GameState.PAUSING;
         }
     }
-    
-    
 
     // ------------------------
     // update object states
@@ -212,7 +211,6 @@ void draw() {
             }
         }
     }
-
 }
 
 // ----------------------------------------------------
@@ -243,13 +241,15 @@ boolean collided(CreditSphere credit, CatchPlate plate){
 }
 
 // ----------------------------------------------------
-// catch plate
+// CatchPlate object
 // ----------------------------------------------------
 class CatchPlate{
     // plate own var
     private final PVector _size;
     private PVector _coordinate;
     private final color _fillColor = color(58, 201, 176, 120);
+    private final float _emitColor = 200;
+    private float _emitColorDynamic = 0;
     private final color _strokeColor = color(58, 201, 176);
     // phisics var
     private final float _initMass = 300;
@@ -267,11 +267,13 @@ class CatchPlate{
     public void put(PVector coordinate){
         _coordinate = coordinate;
         fill(_fillColor);
+        emissive(_emitColorDynamic);
         stroke(_strokeColor);
         pushMatrix();
             translate(_coordinate.x, _coordinate.y, _coordinate.z);
             box(_size.x, _size.y, _size.z);
         popMatrix();
+        emissive(0);
     }
     public void moveAreaSetting(PVector movableAreaSize){
         // movable area is the 3D area centered (0,0,0)
@@ -365,6 +367,9 @@ class CatchPlate{
             _coordinateLimitation();
         // reput
         put(_coordinate);
+        //decreace emitness
+        _emitColorDynamic = max(0, _emitColorDynamic - 15); 
+        print(_emitColorDynamic, '\n');
     }
     public PVector getCoordinate(){
         return _coordinate;
@@ -374,6 +379,7 @@ class CatchPlate{
     }
     public void addMass(float increace){
         _mass += increace;
+        _emitColorDynamic = _emitColor;
     }
     public float getMass(){
         return _mass;
@@ -384,7 +390,7 @@ class CatchPlate{
 }
 
 // ----------------------------------------------------
-// credit sphere
+// CreditSphere
 // ----------------------------------------------------
 class CreditSphere{
     // phisics environment var
@@ -413,7 +419,9 @@ class CreditSphere{
             translate(_coordinate.x, _coordinate.y, _coordinate.z);
             noStroke();
             fill(_bodyColor);
+            emissive(_bodyColor);
             sphere(_r);
+            emissive(0);
         popMatrix();
         _drawPredCircle();
     }
@@ -501,7 +509,7 @@ class GameUI{
     private final color _textCyan = color(44, 148, 166);
     
     // finishUI variables
-    private final color _endUiFill = color(220, 220, 139, 20);
+    private final color _endUiFill = color(220, 220, 139, 70);
 
     // textWindow variables
     private final color _textWindowFill = color(48, 10, 36, 200);
@@ -534,12 +542,14 @@ class GameUI{
                 String scoreMsg = "SCORE: " + score;
                 textAlign(CENTER);
                 fill(_textWhite);
+                emissive(_textWhite);
                 textSize(12);
                 text(endMsg, 0, -10, 0.001);
                 textSize(12);
                 text(scoreMsg, 0, 35, 0.001);
                 textSize(4);
                 text("Press 'R' to restart.", 0, 45, 0.001);
+                emissive(0);
             popMatrix();
     }
     public void drawTextWindow(GameState stateEnum, int itemLeft, int gainedItems, KeyState keyState){
@@ -575,6 +585,7 @@ class GameUI{
     private void _textWindow(PVector size){
         pushMatrix();
             fill(_textWindowFill);
+            emissive(_textWindowFill / 2);
             stroke(_textWindowStroke);
             strokeWeight(3);
             rectMode(CORNER);
@@ -583,33 +594,40 @@ class GameUI{
                 size.x, size.y
             );
             strokeWeight(1); // reset weight
+            emissive(0);
         popMatrix();
     }
     private void _textCommand(){
         fill(_textGreen);
+        emissive(_textGreen);
         text(
             "21140036@TMU", 
            0, 0, _textFloatZ
         );
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             ":", 
             _textShift * 13, 0, _textFloatZ
         );
         fill(_textBlue);
+        emissive(_textBlue);
         text(
             "CG/hw/final",
             _textShift * 14, 0, _textFloatZ
         );
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             "$ game info",
             _textShift * 26, 0, _textFloatZ
         );
+        emissive(0);
     }
     private void _textDescription(){
         // description (about this game) and key operation
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             " * Description:",
             0, 0, _textFloatZ
@@ -627,33 +645,51 @@ class GameUI{
             "   and get falling item AMAP!",
             0, _textShift * 4, _textFloatZ
         );
+        emissive(0);
     }
     private void _textKeyStatus(KeyState keyState){
         // draw W A S D, filled Cyan which is pressed
         // w
-        if(keyState.get('W'))
+        if(keyState.get('W')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("W", 0, 0, _textFloatZ);
         // a
-        if(keyState.get('A'))
+        if(keyState.get('A')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("A", _textShift * 2, 0, _textFloatZ);
         // s
-        if(keyState.get('S'))
+        if(keyState.get('S')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("S", _textShift * 4, 0, _textFloatZ);
         // d
-        if(keyState.get('D'))
+        if(keyState.get('D')){
             fill(_textCyan);
-        else
+            emissive(_textCyan);
+        }
+        else{
             fill(_textWhite);
+            emissive(_textWhite);
+        }
         text("D", _textShift * 6, 0, _textFloatZ);
+        emissive(0);
     }
     private void _textGameStatus(GameState stateEnum, int itemLeft, int gainedItems){
         final String re;
@@ -673,6 +709,7 @@ class GameUI{
         }
         // draw status text
         fill(_textWhite);
+        emissive(_textWhite);
         text(
             " * Game status:",
             0, 0, _textFloatZ
@@ -689,6 +726,7 @@ class GameUI{
             "  - Item gained: " + gainedItems, 
             0, _textShift * 6, _textFloatZ
         );
+        emissive(0);
     }
     private void _textGithub(){
         // put link to GitHub repo
@@ -715,6 +753,7 @@ class GameUI{
             // message
             translate(_textShift / 2, _textShift, 0);
             fill(_textWhite);
+            emissive(_textWhite);
             text(
                 "KeyboardInterrupt:",
                 0, 0, _textFloatZ
@@ -732,12 +771,13 @@ class GameUI{
                 "Yes (Y)       No (N)",
                 _restartWindowSize.x / 2, _textShift * 10, _textFloatZ
             );
+            emissive(0);
         popMatrix();
     }
 }
 
 // ----------------------------------------------------
-// keyState
+// KeyState
 // ----------------------------------------------------
 class KeyState{
     // class to check which key is pressed
@@ -773,7 +813,7 @@ class KeyState{
 }
 
 // ----------------------------------------------------
-// playArea
+// PlayArea
 // ----------------------------------------------------
 class PlayArea{
     float _xSize, _zSize;
@@ -781,7 +821,7 @@ class PlayArea{
     float _wallPeakY = 20;
     color _wallColor = color(31, 31, 31, 180);
     color _edgeColor = color(97, 118, 116, 180);
-    color _fogColor = color(5, 5, 5, 10);
+    color _fogColor = color(215, 215, 215, 10);
     color _Y0Color = color(220, 220, 170);
     private boolean _activateFog = true;
 
