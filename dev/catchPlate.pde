@@ -3,6 +3,8 @@ class CatchPlate{
     private final PVector _size;
     private PVector _coordinate;
     private final color _fillColor = color(58, 201, 176, 120);
+    private final float _emitColor = 200;
+    private float _emitColorDynamic = 0;
     private final color _strokeColor = color(58, 201, 176);
     // phisics var
     private final float _initMass = 300;
@@ -20,11 +22,13 @@ class CatchPlate{
     public void put(PVector coordinate){
         _coordinate = coordinate;
         fill(_fillColor);
+        emissive(_emitColorDynamic);
         stroke(_strokeColor);
         pushMatrix();
             translate(_coordinate.x, _coordinate.y, _coordinate.z);
             box(_size.x, _size.y, _size.z);
         popMatrix();
+        emissive(0);
     }
     public void moveAreaSetting(PVector movableAreaSize){
         // movable area is the 3D area centered (0,0,0)
@@ -118,6 +122,9 @@ class CatchPlate{
             _coordinateLimitation();
         // reput
         put(_coordinate);
+        //decreace emitness
+        _emitColorDynamic = max(0, _emitColorDynamic - 15); 
+        print(_emitColorDynamic, '\n');
     }
     public PVector getCoordinate(){
         return _coordinate;
@@ -127,6 +134,7 @@ class CatchPlate{
     }
     public void addMass(float increace){
         _mass += increace;
+        _emitColorDynamic = _emitColor;
     }
     public float getMass(){
         return _mass;
