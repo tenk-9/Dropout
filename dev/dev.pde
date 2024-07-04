@@ -8,12 +8,12 @@ int appearedCredits = 0;
 float gainedWeights = 0;
 int gainedItems = 0;
 float GPA = 0;
-enum GameState{
-    PLAYING,
-    PAUSING,
-    FINISHED
+class GameState{
+  static final int PLAYING = 0;
+  static final int PAUSING = 1;
+  static final int FINISHED = 2;
 };
-GameState modeState = GameState.PLAYING;
+int modeState = GameState.PLAYING;
 
 // ----------------------------------------------------
 // environment variables

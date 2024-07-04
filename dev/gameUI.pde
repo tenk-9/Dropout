@@ -53,7 +53,7 @@ class GameUI{
                 emissive(0);
             popMatrix();
     }
-    public void drawTextWindow(GameState stateEnum, int itemLeft, int gainedItems, KeyState keyState){
+    public void drawTextWindow(int gameState, int itemLeft, int gainedItems, KeyState keyState){
         // show instructions, leftItems, etc as window like Ubuntu console
         textAlign(LEFT, CENTER);
         textSize(_textSize);
@@ -77,7 +77,7 @@ class GameUI{
             _textKeyStatus(keyState);
             // statusMsg
             translate(-_textShift * 8, _textShift * 4, 0);
-            _textGameStatus(stateEnum, itemLeft, gainedItems);
+            _textGameStatus(gameState, itemLeft, gainedItems);
             // GitHub link
             // translate(0, _textShift * 8, 0);
             // _textGithub();
@@ -192,16 +192,16 @@ class GameUI{
         text("D", _textShift * 6, 0, _textFloatZ);
         emissive(0);
     }
-    private void _textGameStatus(GameState stateEnum, int itemLeft, int gainedItems){
+    private void _textGameStatus(int gameState, int itemLeft, int gainedItems){
         final String re;
-        switch (stateEnum) {
-            case FINISHED :
+        switch (gameState) {
+            case GameState.FINISHED :
                 re = "Finished";
             break;	
-            case PAUSING :
+            case GameState.PAUSING :
                 re = "Pausing";
             break;	
-            case PLAYING :
+            case GameState.PLAYING :
                 re = "Playing";
             break;	
             default :

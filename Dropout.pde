@@ -1,4 +1,252 @@
-// ver: 24021101
+// ver: 20240704\n----------------------------------------------------\n
+class CatchPlate{
+    // plate own var
+    private final PVector _size;
+    private PVector _coordinate;
+    private final color _fillColor = color(58, 201, 176, 120);
+    private final float _emitColor = 200;
+    private float _emitColorDynamic = 0;
+    private final color _strokeColor = color(58, 201, 176);
+    // phisics var
+    private final float _initMass = 300;
+    private float _mass = _initMass;
+    private PVector _velocity = new PVector(0, 0, 0);
+    private PVector _force = new PVector(0, 0, 0);
+    private final float _forceSize = 60000;
+    // area limitation var
+    public boolean moveAreaLimitation = false;
+    private PVector _moveArea = new PVector(0, 0, 0);
+
+    public CatchPlate(PVector size){
+        _size = size;
+    }
+    public void put(PVector coordinate){
+        _coordinate = coordinate;
+        fill(_fillColor);
+        emissive(_emitColorDynamic);
+        stroke(_strokeColor);
+        pushMatrix();
+            translate(_coordinate.x, _coordinate.y, _coordinate.z);
+            box(_size.x, _size.y, _size.z);
+        popMatrix();
+        emissive(0);
+    }
+    public void moveAreaSetting(PVector movableAreaSize){
+        // movable area is the 3D area centered (0,0,0)
+        this.moveAreaLimitation = true;
+        _moveArea = movableAreaSize;
+    }
+    private void _coordinateLimitation(){
+        // x-Plus limit, x-miNus limit, ...
+        float xplim, xnlim, yplim, ynlim, zplim, znlim;
+        xplim = _moveArea.x / 2 - _size.x / 2;
+        xnlim = -xplim;
+        yplim = _moveArea.y / 2 - _size.y / 2;
+        ynlim = -yplim;
+        zplim = _moveArea.z / 2 - _size.z / 2;
+        znlim = -zplim;
+        // x
+        if(_coordinate.x > xplim){
+            _coordinate.x = xplim;
+            _velocity.x = 0;
+        }
+        if(_coordinate.x < xnlim){
+            _coordinate.x = xnlim;
+            _velocity.x = 0;
+        }
+        // y
+        if(_coordinate.y > yplim){
+            _coordinate.y = yplim;
+            _velocity.y = 0;
+        }
+        if(_coordinate.y < ynlim){
+            _coordinate.y = ynlim;
+            _velocity.y = 0;
+        }
+        // z
+        if(_coordinate.z > zplim){
+            _coordinate.z = zplim;
+            _velocity.z = 0;
+        }
+        if(_coordinate.z < znlim){
+            _coordinate.z = znlim;
+            _velocity.z = 0;
+        }  
+    }
+    public void addForce(KeyState keyState){
+        _force = new PVector(0, 0, 0);
+        // wasd
+        if(keyState.get('w')){
+            _force.z += _forceSize;
+        }
+        if(keyState.get('a')){
+            _force.x -= _forceSize;
+        }
+        if(keyState.get('s')){
+            _force.z -= _forceSize;
+        }
+        if(keyState.get('d')){
+            _force.x += _forceSize;
+        }
+        // direction keys
+        // if(keyState.get(UP)){
+        //     _force.z += _forceSize;
+        // }
+        // if(keyState.get(LEFT)){
+        //     _force.x -= _forceSize;
+        // }
+        // if(keyState.get(DOWN)){
+        //     _force.z -= _forceSize;
+        // }
+        // if(keyState.get(RIGHT)){
+        //     _force.x += _forceSize;
+        // }
+    }
+    public void update(){
+        // add force to plate object
+        PVector a, dCoord;
+        // delta time = 1frame
+        float dt = 1.0 / frameRate;
+        // a = F/m
+        a = PVector.div(_force, _mass);
+        // dx = v0*dt + 1/2*a*(dt^2)
+        dCoord = PVector.add(
+            PVector.mult(_velocity, dt),
+            PVector.mult(a, 0.5*dt*dt)
+        );
+        _coordinate = PVector.add(_coordinate, dCoord);
+        // v = v0+a*dt
+        _velocity = PVector.add(_velocity, PVector.mult(a, dt));
+
+        // move area limitation
+        if(moveAreaLimitation)
+            _coordinateLimitation();
+        // reput
+        put(_coordinate);
+        //decreace emitness
+        _emitColorDynamic = max(0, _emitColorDynamic - 15); 
+        print(_emitColorDynamic, '\n');
+    }
+    public PVector getCoordinate(){
+        return _coordinate;
+    }
+    public PVector getSize(){
+        return _size;
+    }
+    public void addMass(float increace){
+        _mass += increace;
+        _emitColorDynamic = _emitColor;
+    }
+    public float getMass(){
+        return _mass;
+    }
+    public void resetMass(){
+        _mass = _initMass;
+    }
+}
+// plate moves X-Z, Credit drops Y+ -> Y-
+
+class CreditSphere{
+    // phisics environment var
+    private final float GravityAcc = -0.1;
+    private final float AirResistanceCoef = 0.001;
+    // sphere var
+    private final float _r, _mass;
+    private float _v;
+    private PVector _coordinate;
+    private color _bodyColor = color(255, 255, 255, 255);
+    // prediction circle var
+    private final float _predictionStartY = 500;
+    private final float _predCircleR = 15, _predCircleDetail = 10;
+    private color _predColor = color(255, 0, 0, 20);
+
+    public CreditSphere(float r, float mass, color fillColor){
+        _r = r;
+        _mass = mass;
+        _v = 0;
+        _bodyColor = fillColor;
+    }
+    public void put(PVector initPlace){
+        // place the sphere
+        _coordinate = initPlace;
+        pushMatrix();
+            translate(_coordinate.x, _coordinate.y, _coordinate.z);
+            noStroke();
+            fill(_bodyColor);
+            emissive(_bodyColor);
+            sphere(_r);
+            emissive(0);
+        popMatrix();
+        _drawPredCircle();
+    }
+    private void _drawPredCircle(){
+        // Prediction circle, with dynamic radius (far:big -> close: small)
+        if(_coordinate.y <= 0){
+            return;
+        }
+        // prediction appears _coordinate.y in (0,_predictionStartY]
+        if(_coordinate.y <= _predictionStartY){
+            float alpha = map(_coordinate.y, 0, _predictionStartY, 255, 0);
+            float radius = map(_coordinate.y, 0, _predictionStartY, 0, _predCircleR);
+            // draw circle
+            noFill();
+            stroke(
+                red(_predColor),
+                green(_predColor),
+                blue(_predColor),
+                alpha
+            );
+            strokeWeight(1.5);
+            pushMatrix();
+                translate(_coordinate.x, 0, _coordinate.z);
+                beginShape();
+                    for (int i = 0; i <= _predCircleDetail; ++i) {
+                        vertex(
+                            radius * cos(TWO_PI / _predCircleDetail * i),
+                            0,
+                            radius * sin(TWO_PI / _predCircleDetail * i)
+                        );
+                    }
+                endShape(CLOSE);
+            popMatrix();
+            strokeWeight(1); // reset stroke width
+        }
+    }
+    public PVector getPlace(){
+        return _coordinate;
+    }
+    public float getY(){
+        return _coordinate.y;
+    }
+    public float getR(){
+        return _r;
+    }
+    public void update(){
+        // update coordinate (next frame condition) and reput sphere.
+        // reflect realistic phisics: free fall, air resistance
+        // calc _v & _coordinate.y @ next frame
+        // gravity force: _m * GravityAcc (- direction on y-axis)
+        // air resistance force: -K * _v (+ direction on y-axis)
+        // total force: airResist - gravity
+        double gravity, airResist, totalForce, accel, k = AirResistanceCoef;
+        gravity = _mass * GravityAcc;
+        airResist = -k * _v;
+        totalForce = airResist + gravity;
+        accel = totalForce / _mass;
+        // time delta: 1frame
+        _coordinate.y += _v * 1.0 + 1/2 * (accel * (1.0 * 1.0));
+        _v += accel * 1.0;
+        // reput
+        put(_coordinate);
+    }
+    public void relocate(PVector place){
+        _v = 0;
+        put(place);
+    }
+    public float getMass(){
+        return _mass;
+    }
+}// plate moves X-Z, Credit drops Y+ -> Y-
 
 // ----------------------------------------------------
 // game system variables
@@ -8,12 +256,12 @@ int appearedCredits = 0;
 float gainedWeights = 0;
 int gainedItems = 0;
 float GPA = 0;
-enum GameState{
-    PLAYING,
-    PAUSING,
-    FINISHED
+class GameState{
+  static final int PLAYING = 0;
+  static final int PAUSING = 1;
+  static final int FINISHED = 2;
 };
-GameState modeState = GameState.PLAYING;
+int modeState = GameState.PLAYING;
 
 // ----------------------------------------------------
 // environment variables
@@ -69,7 +317,7 @@ void setup() {
     frameRate(30);
     // font file must have been created by "Tool/CreateFont".
     // bigger size, clearer edge.
-    UI.setFont("Consolas-50.vlw");
+    UI.setFont("Consolas-100.vlw");
     // game score init
     appearedCredits = HandleCreditCount;
     // smooth();
@@ -238,266 +486,7 @@ boolean collided(CreditSphere credit, CatchPlate plate){
         (creditCoord.z <= (plateCoord.z + plateSize.z / 2))
     );
     return xCond && yCond && zCond;
-}
-
-// ----------------------------------------------------
-// CatchPlate object
-// ----------------------------------------------------
-class CatchPlate{
-    // plate own var
-    private final PVector _size;
-    private PVector _coordinate;
-    private final color _fillColor = color(58, 201, 176, 120);
-    private final float _emitColor = 200;
-    private float _emitColorDynamic = 0;
-    private final color _strokeColor = color(58, 201, 176);
-    // phisics var
-    private final float _initMass = 300;
-    private float _mass = _initMass;
-    private PVector _velocity = new PVector(0, 0, 0);
-    private PVector _force = new PVector(0, 0, 0);
-    private final float _forceSize = 60000;
-    // area limitation var
-    public boolean moveAreaLimitation = false;
-    private PVector _moveArea = new PVector(0, 0, 0);
-
-    public CatchPlate(PVector size){
-        _size = size;
-    }
-    public void put(PVector coordinate){
-        _coordinate = coordinate;
-        fill(_fillColor);
-        emissive(_emitColorDynamic);
-        stroke(_strokeColor);
-        pushMatrix();
-            translate(_coordinate.x, _coordinate.y, _coordinate.z);
-            box(_size.x, _size.y, _size.z);
-        popMatrix();
-        emissive(0);
-    }
-    public void moveAreaSetting(PVector movableAreaSize){
-        // movable area is the 3D area centered (0,0,0)
-        this.moveAreaLimitation = true;
-        _moveArea = movableAreaSize;
-    }
-    private void _coordinateLimitation(){
-        // x-Plus limit, x-miNus limit, ...
-        float xplim, xnlim, yplim, ynlim, zplim, znlim;
-        xplim = _moveArea.x / 2 - _size.x / 2;
-        xnlim = -xplim;
-        yplim = _moveArea.y / 2 - _size.y / 2;
-        ynlim = -yplim;
-        zplim = _moveArea.z / 2 - _size.z / 2;
-        znlim = -zplim;
-        // x
-        if(_coordinate.x > xplim){
-            _coordinate.x = xplim;
-            _velocity.x = 0;
-        }
-        if(_coordinate.x < xnlim){
-            _coordinate.x = xnlim;
-            _velocity.x = 0;
-        }
-        // y
-        if(_coordinate.y > yplim){
-            _coordinate.y = yplim;
-            _velocity.y = 0;
-        }
-        if(_coordinate.y < ynlim){
-            _coordinate.y = ynlim;
-            _velocity.y = 0;
-        }
-        // z
-        if(_coordinate.z > zplim){
-            _coordinate.z = zplim;
-            _velocity.z = 0;
-        }
-        if(_coordinate.z < znlim){
-            _coordinate.z = znlim;
-            _velocity.z = 0;
-        }  
-    }
-    public void addForce(KeyState keyState){
-        _force = new PVector(0, 0, 0);
-        // wasd
-        if(keyState.get('w')){
-            _force.z += _forceSize;
-        }
-        if(keyState.get('a')){
-            _force.x -= _forceSize;
-        }
-        if(keyState.get('s')){
-            _force.z -= _forceSize;
-        }
-        if(keyState.get('d')){
-            _force.x += _forceSize;
-        }
-        // direction keys
-        // if(keyState.get(UP)){
-        //     _force.z += _forceSize;
-        // }
-        // if(keyState.get(LEFT)){
-        //     _force.x -= _forceSize;
-        // }
-        // if(keyState.get(DOWN)){
-        //     _force.z -= _forceSize;
-        // }
-        // if(keyState.get(RIGHT)){
-        //     _force.x += _forceSize;
-        // }
-    }
-    public void update(){
-        // add force to plate object
-        PVector a, dCoord;
-        // delta time = 1frame
-        float dt = 1.0 / frameRate;
-        // a = F/m
-        a = PVector.div(_force, _mass);
-        // dx = v0*dt + 1/2*a*(dt^2)
-        dCoord = PVector.add(
-            PVector.mult(_velocity, dt),
-            PVector.mult(a, 0.5*dt*dt)
-        );
-        _coordinate = PVector.add(_coordinate, dCoord);
-        // v = v0+a*dt
-        _velocity = PVector.add(_velocity, PVector.mult(a, dt));
-
-        // move area limitation
-        if(moveAreaLimitation)
-            _coordinateLimitation();
-        // reput
-        put(_coordinate);
-        //decreace emitness
-        _emitColorDynamic = max(0, _emitColorDynamic - 15); 
-        print(_emitColorDynamic, '\n');
-    }
-    public PVector getCoordinate(){
-        return _coordinate;
-    }
-    public PVector getSize(){
-        return _size;
-    }
-    public void addMass(float increace){
-        _mass += increace;
-        _emitColorDynamic = _emitColor;
-    }
-    public float getMass(){
-        return _mass;
-    }
-    public void resetMass(){
-        _mass = _initMass;
-    }
-}
-
-// ----------------------------------------------------
-// CreditSphere
-// ----------------------------------------------------
-class CreditSphere{
-    // phisics environment var
-    private final float GravityAcc = -0.1;
-    private final float AirResistanceCoef = 0.001;
-    // sphere var
-    private final float _r, _mass;
-    private float _v;
-    private PVector _coordinate;
-    private color _bodyColor = color(255, 255, 255, 255);
-    // prediction circle var
-    private final float _predictionStartY = 500;
-    private final float _predCircleR = 15, _predCircleDetail = 10;
-    private color _predColor = color(255, 0, 0, 20);
-
-    public CreditSphere(float r, float mass, color fillColor){
-        _r = r;
-        _mass = mass;
-        _v = 0;
-        _bodyColor = fillColor;
-    }
-    public void put(PVector initPlace){
-        // place the sphere
-        _coordinate = initPlace;
-        pushMatrix();
-            translate(_coordinate.x, _coordinate.y, _coordinate.z);
-            noStroke();
-            fill(_bodyColor);
-            emissive(_bodyColor);
-            sphere(_r);
-            emissive(0);
-        popMatrix();
-        _drawPredCircle();
-    }
-    private void _drawPredCircle(){
-        // Prediction circle, with dynamic radius (far:big -> close: small)
-        if(_coordinate.y <= 0){
-            return;
-        }
-        // prediction appears _coordinate.y in (0,_predictionStartY]
-        if(_coordinate.y <= _predictionStartY){
-            float alpha = map(_coordinate.y, 0, _predictionStartY, 255, 0);
-            float radius = map(_coordinate.y, 0, _predictionStartY, 0, _predCircleR);
-            // draw circle
-            noFill();
-            stroke(
-                red(_predColor),
-                green(_predColor),
-                blue(_predColor),
-                alpha
-            );
-            strokeWeight(1.5);
-            pushMatrix();
-                translate(_coordinate.x, 0, _coordinate.z);
-                beginShape();
-                    for (int i = 0; i <= _predCircleDetail; ++i) {
-                        vertex(
-                            radius * cos(TWO_PI / _predCircleDetail * i),
-                            0,
-                            radius * sin(TWO_PI / _predCircleDetail * i)
-                        );
-                    }
-                endShape(CLOSE);
-            popMatrix();
-            strokeWeight(1); // reset stroke width
-        }
-    }
-    public PVector getPlace(){
-        return _coordinate;
-    }
-    public float getY(){
-        return _coordinate.y;
-    }
-    public float getR(){
-        return _r;
-    }
-    public void update(){
-        // update coordinate (next frame condition) and reput sphere.
-        // reflect realistic phisics: free fall, air resistance
-        // calc _v & _coordinate.y @ next frame
-        // gravity force: _m * GravityAcc (- direction on y-axis)
-        // air resistance force: -K * _v (+ direction on y-axis)
-        // total force: airResist - gravity
-        double gravity, airResist, totalForce, accel, k = AirResistanceCoef;
-        gravity = _mass * GravityAcc;
-        airResist = -k * _v;
-        totalForce = airResist + gravity;
-        accel = totalForce / _mass;
-        // time delta: 1frame
-        _coordinate.y += _v * 1.0 + 1/2 * (accel * (1.0 * 1.0));
-        _v += accel * 1.0;
-        // reput
-        put(_coordinate);
-    }
-    public void relocate(PVector place){
-        _v = 0;
-        put(place);
-    }
-    public float getMass(){
-        return _mass;
-    }
-}
-
-// ----------------------------------------------------
-// UI
-// ----------------------------------------------------
-class GameUI{
+}class GameUI{
     // this class handles: infomation window, finish message
     // text variables
     private final int _textSize = 4;
@@ -552,7 +541,7 @@ class GameUI{
                 emissive(0);
             popMatrix();
     }
-    public void drawTextWindow(GameState stateEnum, int itemLeft, int gainedItems, KeyState keyState){
+    public void drawTextWindow(int gameState, int itemLeft, int gainedItems, KeyState keyState){
         // show instructions, leftItems, etc as window like Ubuntu console
         textAlign(LEFT, CENTER);
         textSize(_textSize);
@@ -576,7 +565,7 @@ class GameUI{
             _textKeyStatus(keyState);
             // statusMsg
             translate(-_textShift * 8, _textShift * 4, 0);
-            _textGameStatus(stateEnum, itemLeft, gainedItems);
+            _textGameStatus(gameState, itemLeft, gainedItems);
             // GitHub link
             // translate(0, _textShift * 8, 0);
             // _textGithub();
@@ -691,16 +680,16 @@ class GameUI{
         text("D", _textShift * 6, 0, _textFloatZ);
         emissive(0);
     }
-    private void _textGameStatus(GameState stateEnum, int itemLeft, int gainedItems){
+    private void _textGameStatus(int gameState, int itemLeft, int gainedItems){
         final String re;
-        switch (stateEnum) {
-            case FINISHED :
+        switch (gameState) {
+            case GameState.FINISHED :
                 re = "Finished";
             break;	
-            case PAUSING :
+            case GameState.PAUSING :
                 re = "Pausing";
             break;	
-            case PLAYING :
+            case GameState.PLAYING :
                 re = "Playing";
             break;	
             default :
@@ -774,12 +763,7 @@ class GameUI{
             emissive(0);
         popMatrix();
     }
-}
-
-// ----------------------------------------------------
-// KeyState
-// ----------------------------------------------------
-class KeyState{
+}class KeyState{
     // class to check which key is pressed
     private HashMap<Integer, Boolean> states;
     public KeyState(){
@@ -811,10 +795,8 @@ class KeyState{
         states.put(keycode, state);
     }
 }
+// plate moves X-Z, Credit drops Y+ -> Y-
 
-// ----------------------------------------------------
-// PlayArea
-// ----------------------------------------------------
 class PlayArea{
     float _xSize, _zSize;
     float _wallHeight;
