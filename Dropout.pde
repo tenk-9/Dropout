@@ -1,4 +1,4 @@
-// ver: 20240704\n----------------------------------------------------\n
+// ver: 20240704
 class CatchPlate{
     // plate own var
     private final PVector _size;
