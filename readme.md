@@ -33,6 +33,19 @@
   - ポーズが解除され，続きの状態からスタートします．
 
 ## あそびかた
+### 手軽に
+1. リポジトリをクローンします．
+2. 自分の環境に合致したディレクトリを選択します．
+     - `linux-aarch64`
+     - `linux-amd64`
+     - `linux-arm`
+     - `windows-amd64`
+3. 選択したディレクトリ内の実行ファイルを起動します．
+     - `windows-amd64`環境の場合，[OpenSDK 17](https://adoptium.net/temurin/archive/?version=17)のインストールが必要です．
+4. Enjoy ;)
+
+### Processing4を持っている場合
+Processing経由で起動することもできます．
 1. リポジトリをクローンします．
 2. `Dropout.pde`をProcessing4で開きます．
 3. `ツール`タブから`フォント作成`を選択します．
